@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"embed"
 	"fmt"
 	"io/fs"
@@ -19,19 +18,22 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jackc/pgx/v5"
 )
 
 //go:embed frontend/dist/*
 var spaFiles embed.FS
 
 func main() {
+	ctx := context.Background()
 
-	dbConn, err := sql.Open("sqlite3", "test.db")
+	conn, err := pgx.Connect(ctx, "user=user host=localhost password=password dbname=testdb")
 	if err != nil {
 		log.Fatalf("Error opening database connection %v", err.Error())
 	}
-	queries := db.New(dbConn)
+	defer conn.Close(ctx)
+
+	queries := db.New(conn)
 
 	// Create a new router & API
 	router := chi.NewMux()
@@ -114,7 +116,7 @@ func main() {
 
 	// Get a feed's items
 	type GetFeedItemsInput struct {
-		FeedID int64 `path:"feedID"`
+		FeedID int32 `path:"feedID"`
 	}
 
 	type GetFeedItemsOutput struct {
@@ -144,8 +146,8 @@ func main() {
 
 	// Get a feed item
 	type GetFeedItemInput struct {
-		ItemID int64 `path:"itemID"`
-		FeedID int64 `path:"feedID"`
+		ItemID int32 `path:"itemID"`
+		FeedID int32 `path:"feedID"`
 	}
 
 	type GetFeedItemOutput struct {
@@ -178,8 +180,8 @@ func main() {
 
 	// Update feed item
 	type UpdateFeedItemInput struct {
-		FeedID int64 `path:"feedID"`
-		ItemID int64 `path:"itemID"`
+		FeedID int32 `path:"feedID"`
+		ItemID int32 `path:"itemID"`
 		Body   struct {
 			IsRead bool `json:"is_read"`
 		}
@@ -200,7 +202,7 @@ func main() {
 	}, func(ctx context.Context, i *UpdateFeedItemInput) (*UpdateFeedItemOutput, error) {
 		resp := &UpdateFeedItemOutput{}
 
-		var isRead int64 = 0
+		var isRead int32 = 0
 		if i.Body.IsRead {
 			isRead = 1
 		}

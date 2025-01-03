@@ -11,7 +11,7 @@ import (
 
 const addFeed = `-- name: AddFeed :one
 INSERT INTO feeds (url, name)
-VALUES (?, ?)
+VALUES ($1, $2)
 RETURNING id, url, name
 `
 
@@ -21,7 +21,7 @@ type AddFeedParams struct {
 }
 
 func (q *Queries) AddFeed(ctx context.Context, arg AddFeedParams) (Feed, error) {
-	row := q.db.QueryRowContext(ctx, addFeed, arg.Url, arg.Name)
+	row := q.db.QueryRow(ctx, addFeed, arg.Url, arg.Name)
 	var i Feed
 	err := row.Scan(&i.ID, &i.Url, &i.Name)
 	return i, err
@@ -29,7 +29,7 @@ func (q *Queries) AddFeed(ctx context.Context, arg AddFeedParams) (Feed, error) 
 
 const addFeedContent = `-- name: AddFeedContent :exec
 INSERT INTO feed_content (title, description, link, content, feed_id)
-VALUES(?, ?, ?, ?, ?)
+VALUES($1, $2, $3, $4, $5)
 `
 
 type AddFeedContentParams struct {
@@ -37,11 +37,11 @@ type AddFeedContentParams struct {
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	FeedID      int64  `json:"feed_id"`
+	FeedID      int32  `json:"feed_id"`
 }
 
 func (q *Queries) AddFeedContent(ctx context.Context, arg AddFeedContentParams) error {
-	_, err := q.db.ExecContext(ctx, addFeedContent,
+	_, err := q.db.Exec(ctx, addFeedContent,
 		arg.Title,
 		arg.Description,
 		arg.Link,
@@ -59,26 +59,26 @@ SELECT id,
     content,
     is_read
 FROM feed_content
-WHERE feed_id = ?
-    and id = ?
+WHERE feed_id = $1
+    and id = $2
 `
 
 type GetFeedItemParams struct {
-	FeedID int64 `json:"feed_id"`
-	ID     int64 `json:"id"`
+	FeedID int32 `json:"feed_id"`
+	ID     int32 `json:"id"`
 }
 
 type GetFeedItemRow struct {
-	ID          int64  `json:"id"`
+	ID          int32  `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	IsRead      int64  `json:"is_read"`
+	IsRead      int32  `json:"is_read"`
 }
 
 func (q *Queries) GetFeedItem(ctx context.Context, arg GetFeedItemParams) (GetFeedItemRow, error) {
-	row := q.db.QueryRowContext(ctx, getFeedItem, arg.FeedID, arg.ID)
+	row := q.db.QueryRow(ctx, getFeedItem, arg.FeedID, arg.ID)
 	var i GetFeedItemRow
 	err := row.Scan(
 		&i.ID,
@@ -99,20 +99,20 @@ SELECT id,
     content,
     is_read
 FROM feed_content
-WHERE feed_id = ?
+WHERE feed_id = $1
 `
 
 type GetFeedItemsRow struct {
-	ID          int64  `json:"id"`
+	ID          int32  `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	IsRead      int64  `json:"is_read"`
+	IsRead      int32  `json:"is_read"`
 }
 
-func (q *Queries) GetFeedItems(ctx context.Context, feedID int64) ([]GetFeedItemsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getFeedItems, feedID)
+func (q *Queries) GetFeedItems(ctx context.Context, feedID int32) ([]GetFeedItemsRow, error) {
+	rows, err := q.db.Query(ctx, getFeedItems, feedID)
 	if err != nil {
 		return nil, err
 	}
@@ -132,9 +132,6 @@ func (q *Queries) GetFeedItems(ctx context.Context, feedID int64) ([]GetFeedItem
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -153,14 +150,14 @@ ORDER BY name
 `
 
 type GetFeedsRow struct {
-	ID               int64  `json:"id"`
+	ID               int32  `json:"id"`
 	Url              string `json:"url"`
 	Name             string `json:"name"`
 	UnreadItemsCount int64  `json:"unread_items_count"`
 }
 
 func (q *Queries) GetFeeds(ctx context.Context) ([]GetFeedsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getFeeds)
+	rows, err := q.db.Query(ctx, getFeeds)
 	if err != nil {
 		return nil, err
 	}
@@ -178,9 +175,6 @@ func (q *Queries) GetFeeds(ctx context.Context) ([]GetFeedsRow, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -189,20 +183,20 @@ func (q *Queries) GetFeeds(ctx context.Context) ([]GetFeedsRow, error) {
 
 const updateFeedItem = `-- name: UpdateFeedItem :one
 UPDATE feed_content
-SET is_read = ?
-WHERE feed_id = ?
-    AND id = ?
+SET is_read = $1
+WHERE feed_id = $2
+    AND id = $3
 RETURNING id, title, description, link, content, is_read, feed_id
 `
 
 type UpdateFeedItemParams struct {
-	IsRead int64 `json:"is_read"`
-	FeedID int64 `json:"feed_id"`
-	ID     int64 `json:"id"`
+	IsRead int32 `json:"is_read"`
+	FeedID int32 `json:"feed_id"`
+	ID     int32 `json:"id"`
 }
 
 func (q *Queries) UpdateFeedItem(ctx context.Context, arg UpdateFeedItemParams) (FeedContent, error) {
-	row := q.db.QueryRowContext(ctx, updateFeedItem, arg.IsRead, arg.FeedID, arg.ID)
+	row := q.db.QueryRow(ctx, updateFeedItem, arg.IsRead, arg.FeedID, arg.ID)
 	var i FeedContent
 	err := row.Scan(
 		&i.ID,

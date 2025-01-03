@@ -51,7 +51,8 @@ func GetAllFeeds(queries *db.Queries) (*[]db.GetFeedsRow, error) {
 }
 
 // GetAllFeeds retrieves the all the items of a feed from the database
-func GetFeedItems(queries *db.Queries, feedID int64) (*[]db.GetFeedItemsRow, error) {
+func GetFeedItems(queries *db.Queries, feedID int32) (*[]db.GetFeedItemsRow, error) {
+
 	feedItems, err := queries.GetFeedItems(context.Background(), feedID)
 	if err != nil {
 		return nil, err
