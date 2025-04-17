@@ -5,7 +5,8 @@ SELECT feeds.id,
     COUNT(feed_content.id) as unread_items_count
 FROM feeds
     LEFT JOIN feed_content ON feeds.id = feed_content.feed_id
-WHERE feed_content.is_read = 0
+WHERE feed_content.is_read = FALSE
+GROUP BY feeds.id
 ORDER BY name;
 
 -- name: GetFeedItems :many

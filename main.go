@@ -202,15 +202,10 @@ func main() {
 	}, func(ctx context.Context, i *UpdateFeedItemInput) (*UpdateFeedItemOutput, error) {
 		resp := &UpdateFeedItemOutput{}
 
-		var isRead int32 = 0
-		if i.Body.IsRead {
-			isRead = 1
-		}
-
 		updatedFeedItem, err := queries.UpdateFeedItem(context.Background(), db.UpdateFeedItemParams{
 			FeedID: i.FeedID,
 			ID:     i.ItemID,
-			IsRead: isRead,
+			IsRead: i.Body.IsRead,
 		})
 
 		if err != nil {
