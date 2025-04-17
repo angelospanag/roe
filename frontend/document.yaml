@@ -11,6 +11,8 @@ components:
           readOnly: true
           type: string
         name:
+          examples:
+            - SKAI News
           maxLength: 80
           type: string
         url:
@@ -98,7 +100,7 @@ components:
       additionalProperties: false
       properties:
         id:
-          format: int64
+          format: int32
           type: integer
         name:
           type: string
@@ -117,14 +119,13 @@ components:
         description:
           type: string
         feed_id:
-          format: int64
+          format: int32
           type: integer
         id:
-          format: int64
+          format: int32
           type: integer
         is_read:
-          format: int64
-          type: integer
+          type: boolean
         link:
           type: string
         title:
@@ -161,11 +162,10 @@ components:
         description:
           type: string
         id:
-          format: int64
+          format: int32
           type: integer
         is_read:
-          format: int64
-          type: integer
+          type: boolean
         link:
           type: string
         title:
@@ -205,11 +205,10 @@ components:
         description:
           type: string
         id:
-          format: int64
+          format: int32
           type: integer
         is_read:
-          format: int64
-          type: integer
+          type: boolean
         link:
           type: string
         title:
@@ -245,7 +244,7 @@ components:
       additionalProperties: false
       properties:
         id:
-          format: int64
+          format: int32
           type: integer
         name:
           type: string
@@ -346,7 +345,7 @@ paths:
           name: feedID
           required: true
           schema:
-            format: int64
+            format: int32
             type: integer
       responses:
         "200":
@@ -372,13 +371,13 @@ paths:
           name: itemID
           required: true
           schema:
-            format: int64
+            format: int32
             type: integer
         - in: path
           name: feedID
           required: true
           schema:
-            format: int64
+            format: int32
             type: integer
       responses:
         "200":
@@ -403,13 +402,13 @@ paths:
           name: feedID
           required: true
           schema:
-            format: int64
+            format: int32
             type: integer
         - in: path
           name: itemID
           required: true
           schema:
-            format: int64
+            format: int32
             type: integer
       requestBody:
         content:

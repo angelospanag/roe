@@ -17,6 +17,8 @@ function Index() {
 
   return (
     <div className="p-2">
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Error: {error.message}</p>}
       <h3>Welcome Home!</h3>
       <ul>
         {data.feeds?.map((feed: Feed) => (
