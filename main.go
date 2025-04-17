@@ -79,7 +79,7 @@ func main() {
 	type AddFeedInput struct {
 		Body struct {
 			Url  string `json:"url" type:"uri" example:"https://www.skai.gr/feed.xml"`
-			Name string `json:"name,omitempty" maxLength:"80"`
+			Name string `json:"name,omitempty" maxLength:"80" example:"SKAI News"`
 		}
 	}
 
