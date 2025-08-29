@@ -15,11 +15,25 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=testdb
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      POSTGRES_DB: testdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_HOST: db
+      DATABASE_NAME: testdb
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
 
 volumes: 
     pgdata: 

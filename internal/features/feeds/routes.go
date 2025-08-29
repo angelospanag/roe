@@ -1,59 +1,24 @@
-package main
+package feeds
 
 import (
 	"context"
-	"embed"
-	"fmt"
-	"io/fs"
-	"log"
 	"log/slog"
 	"net/http"
-	"os"
-	"path"
-	"strings"
 
-	"github.com/angelospanag/rss-llm-go/db"
-	"github.com/angelospanag/rss-llm-go/internal"
+	"github.com/angelospanag/roe/internal/app"
+	"github.com/angelospanag/roe/internal/db"
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humachi"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
-	"github.com/jackc/pgx/v5"
 )
 
-//go:embed frontend/dist/*
-var spaFiles embed.FS
-
-func main() {
-	ctx := context.Background()
-
-	conn, err := pgx.Connect(ctx, "user=user host=localhost password=password dbname=testdb")
-	if err != nil {
-		log.Fatalf("Error opening database connection %v", err.Error())
-	}
-	defer conn.Close(ctx)
-
-	queries := db.New(conn)
-
-	// Create a new router & API
-	router := chi.NewMux()
-
-	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
-	}))
-	api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
+// RegisterRoutes registers the routes for the feeds feature.
+func RegisterRoutes(api huma.API, app *app.App) {
+	feedsService := NewService(app)
 
 	type GetFeedsOutput struct {
 		Body struct {
 			Feeds []db.GetFeedsRow `json:"feeds"`
 		}
 	}
-
 	// Register GET /feeds
 	huma.Register(api, huma.Operation{
 		OperationID:   "get-feeds",
@@ -64,13 +29,13 @@ func main() {
 		DefaultStatus: http.StatusOK,
 	}, func(ctx context.Context, i *struct{}) (*GetFeedsOutput, error) {
 		resp := &GetFeedsOutput{}
-		feeds, err := internal.GetAllFeeds(queries)
+		feeds, err := feedsService.GetAllFeeds(ctx, app.DBQueries)
 		if err != nil {
 			slog.Error("error fetching feeds", "error", err.Error())
 			return nil, huma.Error500InternalServerError("something went wrong")
 		}
 
-		resp.Body.Feeds = *feeds
+		resp.Body.Feeds = feeds
 
 		return resp, nil
 	})
@@ -105,7 +70,7 @@ func main() {
 			feedName = &i.Body.Name
 		}
 
-		newFeed, err := internal.AddFeed(queries, i.Body.Url, feedName)
+		newFeed, err := feedsService.AddFeed(ctx, app.DBQueries, i.Body.Url, feedName)
 		if err != nil {
 			slog.Error("error adding feeds", "error", err.Error())
 			return nil, huma.Error500InternalServerError("Something went wrong")
@@ -133,7 +98,7 @@ func main() {
 		DefaultStatus: http.StatusOK,
 	}, func(ctx context.Context, i *GetFeedItemsInput) (*GetFeedItemsOutput, error) {
 		resp := &GetFeedItemsOutput{}
-		feedItems, err := internal.GetFeedItems(queries, i.FeedID)
+		feedItems, err := feedsService.GetFeedItems(ctx, app.DBQueries, i.FeedID)
 		if err != nil {
 			slog.Error("error getting feed items", "error", err.Error())
 			return nil, huma.Error500InternalServerError("something went wrong")
@@ -164,7 +129,7 @@ func main() {
 		DefaultStatus: http.StatusOK,
 	}, func(ctx context.Context, i *GetFeedItemInput) (*GetFeedItemOutput, error) {
 		resp := &GetFeedItemOutput{}
-		feedItem, err := queries.GetFeedItem(context.Background(), db.GetFeedItemParams{
+		feedItem, err := app.DBQueries.GetFeedItem(ctx, db.GetFeedItemParams{
 			FeedID: i.FeedID,
 			ID:     i.ItemID,
 		})
@@ -202,12 +167,14 @@ func main() {
 	}, func(ctx context.Context, i *UpdateFeedItemInput) (*UpdateFeedItemOutput, error) {
 		resp := &UpdateFeedItemOutput{}
 
-		updatedFeedItem, err := queries.UpdateFeedItem(context.Background(), db.UpdateFeedItemParams{
-			FeedID: i.FeedID,
-			ID:     i.ItemID,
-			IsRead: i.Body.IsRead,
-		})
-
+		updatedFeedItem, err := app.DBQueries.UpdateFeedItem(
+			ctx,
+			db.UpdateFeedItemParams{
+				FeedID: i.FeedID,
+				ID:     i.ItemID,
+				IsRead: i.Body.IsRead,
+			},
+		)
 		if err != nil {
 			slog.Error("error updating feed item", "error", err.Error())
 			return nil, huma.Error500InternalServerError("Something went wrong")
@@ -215,27 +182,4 @@ func main() {
 		resp.Body.Item = updatedFeedItem
 		return resp, nil
 	})
-
-	router.Handle("/*", SPAHandler())
-
-	// Start server
-	http.ListenAndServe("127.0.0.1:8000", router)
-}
-
-// https://github.com/go-chi/chi/issues/611
-func SPAHandler() http.HandlerFunc {
-	spaFS, err := fs.Sub(spaFiles, "frontend/dist")
-	if err != nil {
-		panic(fmt.Errorf("failed getting the sub tree for the site files: %w", err))
-	}
-	return func(w http.ResponseWriter, r *http.Request) {
-		f, err := spaFS.Open(strings.TrimPrefix(path.Clean(r.URL.Path), "/"))
-		if err == nil {
-			defer f.Close()
-		}
-		if os.IsNotExist(err) {
-			r.URL.Path = "/"
-		}
-		http.FileServer(http.FS(spaFS)).ServeHTTP(w, r)
-	}
 }

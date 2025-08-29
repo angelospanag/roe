@@ -1,17 +1,19 @@
-module github.com/angelospanag/rss-llm-go
+module github.com/angelospanag/roe
 
-go 1.24.2
+go 1.25.0
 
 require (
-	github.com/danielgtaylor/huma/v2 v2.27.0
-	github.com/go-chi/chi/v5 v5.2.0
-	github.com/go-chi/cors v1.2.1
-	github.com/jackc/pgx/v5 v5.7.2
+	github.com/danielgtaylor/huma/v2 v2.34.1
+	github.com/go-chi/chi/v5 v5.2.3
+	github.com/go-chi/cors v1.2.2
+	github.com/gofrs/uuid/v5 v5.3.2
+	github.com/jackc/pgx/v5 v5.7.5
+	github.com/joho/godotenv v1.5.1
 	github.com/mmcdole/gofeed v1.3.0
 )
 
 require (
-	github.com/PuerkitoBio/goquery v1.10.1 // indirect
+	github.com/PuerkitoBio/goquery v1.10.3 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
@@ -19,7 +21,7 @@ require (
 	github.com/mmcdole/goxpp v1.1.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 )
