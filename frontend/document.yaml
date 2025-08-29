@@ -290,7 +290,7 @@ components:
         - item
       type: object
 info:
-  title: My API
+  title: Roe API
   version: 1.0.0
 openapi: 3.1.0
 paths:

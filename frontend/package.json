@@ -11,27 +11,26 @@
     "generate-client": "orval"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.62.12",
-    "@tanstack/react-router": "^1.94.1",
-    "axios": "^1.7.9",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@tanstack/react-query": "^5.85.5",
+    "@tanstack/react-router": "^1.131.28",
+    "@tanstack/react-router-devtools": "^1.131.28",
+    "axios": "^1.11.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@tanstack/eslint-plugin-query": "^5.62.9",
-    "@tanstack/router-devtools": "^1.94.1",
-    "@tanstack/router-plugin": "^1.94.1",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.17.0",
-    "eslint-plugin-react-hooks": "5.1.0-rc-fb9a90fa48-20240614",
-    "eslint-plugin-react-refresh": "^0.4.16",
-    "globals": "^15.14.0",
-    "orval": "^7.3.0",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.19.0",
-    "vite": "^6.0.7"
+    "@eslint/js": "^9.33.0",
+    "@tanstack/router-plugin": "^1.131.28",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "orval": "^7.11.2",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2"
   }
 }
