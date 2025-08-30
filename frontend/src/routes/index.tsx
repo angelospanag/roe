@@ -1,6 +1,7 @@
 import {createFileRoute} from "@tanstack/react-router";
 import {getGetFeedsQueryOptions, useGetFeeds} from "../client.ts";
 import type {Feed} from "../model";
+import FeedList from "../components/FeedList.tsx";
 
 
 export const Route = createFileRoute("/")({
@@ -26,6 +27,7 @@ function Index() {
                     </li>
                 ))}
             </ul>
+            <FeedList feeds={data?.data}/>
         </div>
     );
 }
