@@ -77,13 +77,13 @@ export const getFeeds = (
     
     
     return axios.default.get(
-      `http://localhost:8000/feeds`,options
+      `/feeds`,options
     );
   }
 
 
 export const getGetFeedsQueryKey = () => {
-    return [`http://localhost:8000/feeds`] as const;
+    return [`/feeds`] as const;
     }
 
     
@@ -163,7 +163,7 @@ export const postFeed = (
     
     
     return axios.default.post(
-      `http://localhost:8000/feeds`,
+      `/feeds`,
       addFeedInputBody,options
     );
   }
@@ -225,13 +225,13 @@ export const getFeedItems = (
     
     
     return axios.default.get(
-      `http://localhost:8000/feeds/${feedID}/items`,options
+      `/feeds/${feedID}/items`,options
     );
   }
 
 
 export const getGetFeedItemsQueryKey = (feedID?: number,) => {
-    return [`http://localhost:8000/feeds/${feedID}/items`] as const;
+    return [`/feeds/${feedID}/items`] as const;
     }
 
     
@@ -312,14 +312,14 @@ export const getFeedItem = (
     
     
     return axios.default.get(
-      `http://localhost:8000/feeds/${feedID}/items/${itemID}`,options
+      `/feeds/${feedID}/items/${itemID}`,options
     );
   }
 
 
 export const getGetFeedItemQueryKey = (feedID?: number,
     itemID?: number,) => {
-    return [`http://localhost:8000/feeds/${feedID}/items/${itemID}`] as const;
+    return [`/feeds/${feedID}/items/${itemID}`] as const;
     }
 
     
@@ -406,7 +406,7 @@ export const updateFeedItem = (
     
     
     return axios.default.post(
-      `http://localhost:8000/feeds/${feedID}/items/${itemID}`,
+      `/feeds/${feedID}/items/${itemID}`,
       updateFeedItemInputBody,options
     );
   }

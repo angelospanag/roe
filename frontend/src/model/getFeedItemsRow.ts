@@ -9,7 +9,7 @@ export interface GetFeedItemsRow {
   content: string;
   description: string;
   id: number;
-  is_read: boolean;
+  isRead: boolean;
   link: string;
   title: string;
 }

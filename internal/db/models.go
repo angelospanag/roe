@@ -16,6 +16,6 @@ type FeedContent struct {
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	IsRead      bool   `json:"is_read"`
-	FeedID      int32  `json:"feed_id"`
+	IsRead      bool   `json:"isRead"`
+	FeedID      int32  `json:"feedId"`
 }

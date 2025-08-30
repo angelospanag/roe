@@ -9,4 +9,4 @@ sql:
         out: "internal/db"
         emit_json_tags: true
         sql_package: "pgx/v5"
-        json_tags_case_style: snake
+        json_tags_case_style: camel

@@ -118,13 +118,13 @@ components:
           type: string
         description:
           type: string
-        feed_id:
+        feedId:
           format: int32
           type: integer
         id:
           format: int32
           type: integer
-        is_read:
+        isRead:
           type: boolean
         link:
           type: string
@@ -136,8 +136,8 @@ components:
         - description
         - link
         - content
-        - is_read
-        - feed_id
+        - isRead
+        - feedId
       type: object
     GetFeedItemOutputBody:
       additionalProperties: false
@@ -164,7 +164,7 @@ components:
         id:
           format: int32
           type: integer
-        is_read:
+        isRead:
           type: boolean
         link:
           type: string
@@ -176,7 +176,7 @@ components:
         - description
         - link
         - content
-        - is_read
+        - isRead
       type: object
     GetFeedItemsOutputBody:
       additionalProperties: false
@@ -207,7 +207,7 @@ components:
         id:
           format: int32
           type: integer
-        is_read:
+        isRead:
           type: boolean
         link:
           type: string
@@ -219,7 +219,7 @@ components:
         - description
         - link
         - content
-        - is_read
+        - isRead
       type: object
     GetFeedsOutputBody:
       additionalProperties: false
@@ -248,7 +248,7 @@ components:
           type: integer
         name:
           type: string
-        unread_items_count:
+        unreadItemsCount:
           format: int64
           type: integer
         url:
@@ -257,7 +257,7 @@ components:
         - id
         - url
         - name
-        - unread_items_count
+        - unreadItemsCount
       type: object
     UpdateFeedItemInputBody:
       additionalProperties: false

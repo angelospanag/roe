@@ -37,7 +37,7 @@ type AddFeedContentParams struct {
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	FeedID      int32  `json:"feed_id"`
+	FeedID      int32  `json:"feedId"`
 }
 
 func (q *Queries) AddFeedContent(ctx context.Context, arg AddFeedContentParams) error {
@@ -64,7 +64,7 @@ WHERE feed_id = $1
 `
 
 type GetFeedItemParams struct {
-	FeedID int32 `json:"feed_id"`
+	FeedID int32 `json:"feedId"`
 	ID     int32 `json:"id"`
 }
 
@@ -74,7 +74,7 @@ type GetFeedItemRow struct {
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	IsRead      bool   `json:"is_read"`
+	IsRead      bool   `json:"isRead"`
 }
 
 func (q *Queries) GetFeedItem(ctx context.Context, arg GetFeedItemParams) (GetFeedItemRow, error) {
@@ -108,7 +108,7 @@ type GetFeedItemsRow struct {
 	Description string `json:"description"`
 	Link        string `json:"link"`
 	Content     string `json:"content"`
-	IsRead      bool   `json:"is_read"`
+	IsRead      bool   `json:"isRead"`
 }
 
 func (q *Queries) GetFeedItems(ctx context.Context, feedID int32) ([]GetFeedItemsRow, error) {
@@ -154,7 +154,7 @@ type GetFeedsRow struct {
 	ID               int32  `json:"id"`
 	Url              string `json:"url"`
 	Name             string `json:"name"`
-	UnreadItemsCount int64  `json:"unread_items_count"`
+	UnreadItemsCount int64  `json:"unreadItemsCount"`
 }
 
 func (q *Queries) GetFeeds(ctx context.Context) ([]GetFeedsRow, error) {
@@ -191,8 +191,8 @@ RETURNING id, title, description, link, content, is_read, feed_id
 `
 
 type UpdateFeedItemParams struct {
-	IsRead bool  `json:"is_read"`
-	FeedID int32 `json:"feed_id"`
+	IsRead bool  `json:"isRead"`
+	FeedID int32 `json:"feedId"`
 	ID     int32 `json:"id"`
 }
 

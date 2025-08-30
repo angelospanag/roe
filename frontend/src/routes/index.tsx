@@ -5,14 +5,14 @@ import type {Feed} from "../model";
 
 export const Route = createFileRoute("/")({
     loader: ({context: {queryClient}}) =>
-        queryClient.ensureQueryData(getGetFeedsQueryOptions()),
+        queryClient.ensureQueryData(getGetFeedsQueryOptions({axios: {baseURL: import.meta.env.VITE_API_BASE_URL}})),
     component: Index,
 });
 
 
 function Index() {
 
-    const {data, isLoading, error} = useGetFeeds();
+    const {data, isLoading, error} = useGetFeeds({axios: {baseURL: import.meta.env.VITE_API_BASE_URL}});
 
     return (
         <div className="p-2">
@@ -22,7 +22,7 @@ function Index() {
             <ul>
                 {data?.data.feeds?.map((feed: Feed) => (
                     <li key={feed.id}>
-                        {feed.id} - {feed.name}
+                        {feed.id} - {feed.name} - {feed.url}
                     </li>
                 ))}
             </ul>

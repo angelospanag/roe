@@ -8,9 +8,9 @@
 export interface FeedContent {
   content: string;
   description: string;
-  feed_id: number;
+  feedId: number;
   id: number;
-  is_read: boolean;
+  isRead: boolean;
   link: string;
   title: string;
 }

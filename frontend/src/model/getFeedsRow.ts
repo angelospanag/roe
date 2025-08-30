@@ -8,6 +8,6 @@
 export interface GetFeedsRow {
   id: number;
   name: string;
-  unread_items_count: number;
+  unreadItemsCount: number;
   url: string;
 }
