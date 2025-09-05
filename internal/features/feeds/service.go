@@ -29,7 +29,11 @@ func (s *Service) AddFeed(
 ) (*db.Feed, error) {
 	// Parse feed, optionally add a custom feed name if one is passed
 	fp := gofeed.NewParser()
-	feed, _ := fp.ParseURL(url)
+	feed, err := fp.ParseURL(url)
+	if err != nil {
+		return nil, err
+	}
+
 	if name == nil {
 		name = &feed.Title
 	}

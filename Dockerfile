@@ -6,13 +6,14 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
 
-FROM scratch
+FROM gcr.io/distroless/base:nonroot
 
 COPY --from=builder /out/api /api
 
-USER 65532:65532
+USER nonroot
 
 EXPOSE 8000
 ENTRYPOINT ["/api"]
