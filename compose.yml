@@ -11,7 +11,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   db:
-    image: postgres:17
+    image: postgres:18.1
     ports:
       - "5432:5432"
     environment:
@@ -19,7 +19,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
 
   api:
     build:
