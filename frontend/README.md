@@ -13,11 +13,10 @@
 
 ### Install runtimes
 
-- [Node.js 22](https://nodejs.org/en/)
-- [pnpm](https://pnpm.io/)
+- [Bun](https://bun.com/)
 
 ```bash
-brew install node@22 pnpm
+brew install oven-sh/bun/bun
 ````
 
 ### Create a `.env` file in the root of the project with the following content:
@@ -29,11 +28,11 @@ VITE_API_BASE_URL=http://localhost:8000
 ### Install dependencies
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### Run development server
 
 ```bash
-pnpm run dev
+bun dev
 ```

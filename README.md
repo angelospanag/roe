@@ -26,18 +26,17 @@ Creating a local RSS reader from scratch.
 
 - [Go 1.25](https://go.dev)
 - [sqlc](https://sqlc.dev/) for generating database code
-- [golangci-lint](https://golangci-lint.run/) for linting
+- [golangci-lint](https://golangci-lint.run/) for linting and formatting
 - [Task](https://taskfile.dev/) for running tasks
-- [Node 22](https://nodejs.org/en)
-- [pnpm](https://pnpm.io/)
+- [Bun](https://bun.com/)
 - [Docker](https://www.docker.com/)
 
 ### 1. Install runtimes
 
-**Using MacOS and `brew`**
+**Using macOS and `brew`**
 
 ```bash
-brew install go@1.25 sqlc golangci-lint go-task node@22 pnpm
+brew install go@1.25 sqlc golangci-lint go-task oven-sh/bun/bun
 brew install --cask docker-desktop
 ```
 
@@ -63,7 +62,7 @@ go mod tidy
 
 ```bash
 cd frontend
-pnpm install
+bun install
 ```
 
 ### 4. Create a PostgreSQL local database using Docker
