@@ -36,40 +36,50 @@ cmd/api/main.go    # Entry point
 
 ## Quick Start
 
+## Getting Started
+
+[mise](https://mise.jdx.dev/) manages the pinned toolchain
+([Go 1.26.2](https://go.dev), [golangci-lint](https://golangci-lint.run/)), [sqlc](https://sqlc.dev/).
+[Docker](https://www.docker.com/) is a separate prerequisite (install Docker Desktop or
+equivalent).
+
 ```bash
-# Setup prerequisites (one time)
-task setup
+# macOS / Linux
+curl https://mise.run | sh
 
-# Start PostgreSQL
-docker-compose up -d
-
-# Run migrations
-./scripts/setup-db.sh
-
-# Run API
-task run
+# Windows
+winget install jdx.mise
 ```
 
-Or build and run the binary:
+Activate mise in your shell so the pinned versions take precedence over any system
+installs (Homebrew, etc.). In `~/.zshrc`:
+
+```zsh
+eval "$(mise activate zsh)"
+```
+
+Then, in the repo:
 
 ```bash
-task build
-./bin/app
+mise trust    # one-time, confirms you trust this repo's mise.toml
+mise install  # downloads and pins Go and golangci-lint
 ```
 
 API: **http://localhost:8080** • Docs: **http://localhost:8080/docs**
 
-## Common Commands
+## Development
 
-```bash
-task run            # Run without building
-task build          # Build for current platform
-task build:all      # Build for all platforms
-task test           # Run tests
-task lint           # Run linters
-task fmt            # Format code
-task clean          # Remove build artifacts
-```
+| Command                 | Description                                        |
+| ----------------------- |----------------------------------------------------|
+| `mise run dev`          | Run without building a binary                      |
+| `mise run build`        | Build for current platform                         |
+| `mise run test`         | Run tests (requires Docker)            ß           |
+| `mise run fmt`          | Format code via `golangci-lint fmt`                |
+| `mise run lint`         | Run linters via `golangci-lint run`                |
+| `mise run vuln`         | Scan dependencies for known vulnerabilities        |
+| `mise run deps`         | Update and tidy dependencies                       |
+| `mise run generate`     | Generate sqlc bindings from SQL schema             |
+| `mise run clean`        | Remove build artifacts                             |
 
 ## API Endpoints
 
@@ -135,10 +145,4 @@ PORT="8080"
 ```bash
 # Regenerate SQLC code after changing db/queries/*.sql
 sqlc generate
-
-# Build
-go build -o bin/api cmd/api/main.go
-
-# Test
-go test ./...
 ```

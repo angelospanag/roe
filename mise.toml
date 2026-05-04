@@ -1,0 +1,44 @@
+[tools]
+go = "1.26.2"
+golangci-lint = "2.12.1"
+sqlc = "1.31.1"
+
+[tasks.dev]
+description = "🚀 Run without building a binary"
+run = "go run ./cmd/api"
+
+[tasks.build]
+description = "📦 Build for current platform"
+run = "go build -o bin/app ./cmd/api"
+
+[tasks.test]
+description = "🧪 Run tests"
+run = "go test ./..."
+
+[tasks.fmt]
+description = "✨ Format code with golangci-lint"
+run = "golangci-lint fmt"
+
+[tasks.lint]
+description = "🔍 Run linters"
+run = "golangci-lint run"
+
+[tasks.vuln]
+description = "🛡️ Scan dependencies for known vulnerabilities"
+run = "go tool govulncheck ./..."
+
+[tasks.deps]
+description = "📥 Update and tidy dependencies"
+run = [
+    "go get -u ./...",
+    "go get -u tool",
+    "go mod tidy",
+]
+
+[tasks.generate]
+description = "⚙️ Generate sqlc bindings from SQL schema"
+run = "sqlc generate"
+
+[tasks.clean]
+description = "🧹 Remove build artifacts"
+run = "rm -rf bin"
