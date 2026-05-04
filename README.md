@@ -1,6 +1,7 @@
 # ROE
 
-**Roe** is a lightweight RSS feed aggregator inspired by the Greek word *ροή* (flow) — built with Go 1.26, Huma, SQLC, and PostgreSQL to keep your feeds moving.
+**Roe** is a lightweight RSS feed aggregator inspired by the Greek word *ροή* (flow) — built with Go 1.26, Huma, SQLC,
+and PostgreSQL to keep your feeds moving.
 
 ## Features
 
@@ -27,14 +28,6 @@ db/
 └── queries/       # SQLC queries
 cmd/api/main.go    # Entry point
 ```
-
-## Prerequisites
-
-- Go 1.26+
-- Task: `brew install go-task` (or [install from releases](https://taskfile.dev/installation/))
-- Docker (for PostgreSQL)
-
-## Quick Start
 
 ## Getting Started
 
@@ -69,23 +62,24 @@ API: **http://localhost:8080** • Docs: **http://localhost:8080/docs**
 
 ## Development
 
-| Command                 | Description                                        |
-| ----------------------- |----------------------------------------------------|
-| `mise run dev`          | Run without building a binary                      |
-| `mise run build`        | Build for current platform                         |
-| `mise run test`         | Run tests (requires Docker)            ß           |
-| `mise run fmt`          | Format code via `golangci-lint fmt`                |
-| `mise run lint`         | Run linters via `golangci-lint run`                |
-| `mise run vuln`         | Scan dependencies for known vulnerabilities        |
-| `mise run deps`         | Update and tidy dependencies                       |
-| `mise run generate`     | Generate sqlc bindings from SQL schema             |
-| `mise run clean`        | Remove build artifacts                             |
+| Command             | Description                                 |
+|---------------------|---------------------------------------------|
+| `mise run dev`      | Run without building a binary               |
+| `mise run build`    | Build for current platform                  |
+| `mise run test`     | Run tests (requires Docker)            ß    |
+| `mise run fmt`      | Format code via `golangci-lint fmt`         |
+| `mise run lint`     | Run linters via `golangci-lint run`         |
+| `mise run vuln`     | Scan dependencies for known vulnerabilities |
+| `mise run deps`     | Update and tidy dependencies                |
+| `mise run generate` | Generate sqlc bindings from SQL schema      |
+| `mise run clean`    | Remove build artifacts                      |
 
 ## API Endpoints
 
 ### Feeds
+
 | Method | Endpoint                    | Description      |
-| ------ | --------------------------- | ---------------- |
+|--------|-----------------------------|------------------|
 | POST   | `/feeds`                    | Create feed      |
 | GET    | `/feeds`                    | List feeds       |
 | GET    | `/feeds/{id}`               | Get feed         |
@@ -96,8 +90,9 @@ API: **http://localhost:8080** • Docs: **http://localhost:8080/docs**
 | GET    | `/feeds/{id}/unread/count`  | Count unread     |
 
 ### Posts
+
 | Method | Endpoint              | Description      |
-| ------ | --------------------- | ---------------- |
+|--------|-----------------------|------------------|
 | GET    | `/posts`              | List posts       |
 | GET    | `/posts/{id}`         | Get post         |
 | PATCH  | `/posts/{id}/read`    | Mark read/unread |
@@ -127,6 +122,7 @@ curl -X PATCH http://localhost:8080/posts/1/read -H "Content-Type: application/j
 ## Configuration
 
 Environment variables:
+
 ```bash
 DATABASE_URL="postgres://postgres:postgres@localhost:5432/roe_backend?sslmode=disable"
 PORT="8080"
@@ -137,12 +133,6 @@ PORT="8080"
 **Feeds**: id, title, url (unique), description, link, timestamps
 
 **Posts**: id, feed_id (FK), title, description, content, link, author, published_at, guid, is_read, timestamps
+
 - Unique: (feed_id, guid)
 - Indexes: feed_id, is_read, published_at
-
-## Development
-
-```bash
-# Regenerate SQLC code after changing db/queries/*.sql
-sqlc generate
-```
