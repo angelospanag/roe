@@ -1,6 +1,6 @@
 [tools]
-go = "1.26.2"
-golangci-lint = "2.12.1"
+go = "1.26.3"
+golangci-lint = "2.12.2"
 sqlc = "1.31.1"
 
 [tasks.dev]
@@ -29,11 +29,7 @@ run = "go tool govulncheck ./..."
 
 [tasks.deps]
 description = "📥 Update and tidy dependencies"
-run = [
-    "go get -u ./...",
-    "go get -u tool",
-    "go mod tidy",
-]
+run = ["go get -u ./...", "go get -u tool", "go mod tidy"]
 
 [tasks.generate]
 description = "⚙️ Generate sqlc bindings from SQL schema"
