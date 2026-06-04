@@ -148,7 +148,13 @@ func (s *Service) RefreshAllFeeds(ctx context.Context) (int, int, error) {
 		totalPostsAdded += postsAdded
 	}
 
-	s.logger.Info("all feeds refreshed", "feeds_updated", feedsUpdated, "posts_added", totalPostsAdded)
+	s.logger.Info(
+		"all feeds refreshed",
+		"feeds_updated",
+		feedsUpdated,
+		"posts_added",
+		totalPostsAdded,
+	)
 	return feedsUpdated, totalPostsAdded, nil
 }
 

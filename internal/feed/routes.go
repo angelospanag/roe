@@ -120,7 +120,6 @@ func RegisterRoutes(api huma.API, pool *pgxpool.Pool, logger *slog.Logger) {
 				Valid:  input.Body.Link != "",
 			}),
 		})
-
 		if err != nil {
 			logger.Error("failed to create feed", "error", err)
 			return nil, huma.Error409Conflict("feed with this URL already exists")
@@ -201,7 +200,6 @@ func RegisterRoutes(api huma.API, pool *pgxpool.Pool, logger *slog.Logger) {
 				Valid:  input.Body.Link != "",
 			}),
 		})
-
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
 				return nil, huma.Error404NotFound("feed not found")

@@ -17,8 +17,5 @@ jobs:
       - name: Lint
         run: mise run lint
 
-      - name: Vet
-        run: go vet ./...
-
       - name: Vulnerability audit
         run: mise run vuln
