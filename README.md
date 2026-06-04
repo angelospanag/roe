@@ -32,7 +32,7 @@ cmd/api/main.go    # Entry point
 ## Getting Started
 
 [mise](https://mise.jdx.dev/) manages the pinned toolchain
-([Go 1.26.2](https://go.dev), [golangci-lint](https://golangci-lint.run/), [sqlc](https://sqlc.dev/)).
+([Go 1.26.4](https://go.dev), [golangci-lint](https://golangci-lint.run/), [sqlc](https://sqlc.dev/)).
 [Docker](https://www.docker.com/) is a separate prerequisite (install Docker Desktop or
 equivalent).
 
@@ -66,7 +66,7 @@ API: **http://localhost:8080** • Docs: **http://localhost:8080/docs**
 |---------------------|---------------------------------------------|
 | `mise run dev`      | Run without building a binary               |
 | `mise run build`    | Build for current platform                  |
-| `mise run test`     | Run tests (requires Docker)            ß    |
+| `mise run test`     | Run tests                                   |
 | `mise run fmt`      | Format code via `golangci-lint fmt`         |
 | `mise run lint`     | Run linters via `golangci-lint run`         |
 | `mise run vuln`     | Scan dependencies for known vulnerabilities |
