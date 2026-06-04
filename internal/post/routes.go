@@ -10,12 +10,11 @@ import (
 	"github.com/angelospanag/roe/internal/db"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // RegisterRoutes initializes the post service and registers all post routes
-func RegisterRoutes(api huma.API, pool *pgxpool.Pool, logger *slog.Logger) {
-	service := NewService(pool, logger)
+func RegisterRoutes(api huma.API, querier db.Querier, logger *slog.Logger) {
+	service := NewService(querier, logger)
 
 	huma.Register(api, huma.Operation{
 		OperationID: "mark-all-read",

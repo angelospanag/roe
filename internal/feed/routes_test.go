@@ -1,0 +1,114 @@
+package feed_test
+
+import (
+	"context"
+	"log/slog"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/angelospanag/roe/internal/db"
+	"github.com/angelospanag/roe/internal/feed"
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humachi"
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5"
+)
+
+type mockQuerier struct {
+	listFeedsResult []db.Feed
+	listFeedsErr    error
+	getFeedResult   db.Feed
+	getFeedErr      error
+}
+
+func (m *mockQuerier) CountUnreadPosts(_ context.Context) (int64, error) { return 0, nil }
+func (m *mockQuerier) CountUnreadPostsByFeed(_ context.Context, _ int32) (int64, error) {
+	return 0, nil
+}
+
+func (m *mockQuerier) CreateFeed(_ context.Context, _ db.CreateFeedParams) (db.Feed, error) {
+	return db.Feed{}, nil
+}
+
+func (m *mockQuerier) CreatePost(_ context.Context, _ db.CreatePostParams) (db.Post, error) {
+	return db.Post{}, nil
+}
+func (m *mockQuerier) DeleteFeed(_ context.Context, _ int32) error { return nil }
+func (m *mockQuerier) DeletePost(_ context.Context, _ int32) error { return nil }
+func (m *mockQuerier) GetFeedByURL(_ context.Context, _ string) (db.Feed, error) {
+	return db.Feed{}, nil
+}
+func (m *mockQuerier) GetPost(_ context.Context, _ int32) (db.Post, error) { return db.Post{}, nil }
+func (m *mockQuerier) ListPosts(_ context.Context, _ db.ListPostsParams) ([]db.Post, error) {
+	return nil, nil
+}
+
+func (m *mockQuerier) ListPostsByFeed(
+	_ context.Context,
+	_ db.ListPostsByFeedParams,
+) ([]db.Post, error) {
+	return nil, nil
+}
+
+func (m *mockQuerier) ListUnreadPosts(
+	_ context.Context,
+	_ db.ListUnreadPostsParams,
+) ([]db.Post, error) {
+	return nil, nil
+}
+
+func (m *mockQuerier) ListUnreadPostsByFeed(
+	_ context.Context,
+	_ db.ListUnreadPostsByFeedParams,
+) ([]db.Post, error) {
+	return nil, nil
+}
+func (m *mockQuerier) MarkAllPostsAsRead(_ context.Context, _ int32) error { return nil }
+func (m *mockQuerier) MarkPostAsRead(_ context.Context, _ int32) error     { return nil }
+func (m *mockQuerier) MarkPostAsUnread(_ context.Context, _ int32) error   { return nil }
+func (m *mockQuerier) UpdateFeed(_ context.Context, _ db.UpdateFeedParams) (db.Feed, error) {
+	return db.Feed{}, nil
+}
+func (m *mockQuerier) UpdateFeedLastFetched(_ context.Context, _ int32) error { return nil }
+
+func (m *mockQuerier) GetFeed(_ context.Context, _ int32) (db.Feed, error) {
+	return m.getFeedResult, m.getFeedErr
+}
+
+func (m *mockQuerier) ListFeeds(_ context.Context) ([]db.Feed, error) {
+	return m.listFeedsResult, m.listFeedsErr
+}
+
+func newTestRouter(q db.Querier) *chi.Mux {
+	router := chi.NewMux()
+	api := humachi.New(router, huma.DefaultConfig("test", "1.0.0"))
+	feed.RegisterRoutes(api, q, slog.Default())
+	return router
+}
+
+func TestListFeeds_Empty(t *testing.T) {
+	q := &mockQuerier{listFeedsResult: []db.Feed{}}
+	router := newTestRouter(q)
+
+	req := httptest.NewRequest(http.MethodGet, "/feeds", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+func TestGetFeed_NotFound(t *testing.T) {
+	q := &mockQuerier{getFeedErr: pgx.ErrNoRows}
+	router := newTestRouter(q)
+
+	req := httptest.NewRequest(http.MethodGet, "/feeds/999", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d: %s", w.Code, w.Body.String())
+	}
+}

@@ -12,7 +12,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // CreateInput represents the input for creating a feed
@@ -94,8 +93,8 @@ func mapToResponse(feed db.Feed) FeedResponse {
 }
 
 // RegisterRoutes initializes the feed service and registers all feed routes
-func RegisterRoutes(api huma.API, pool *pgxpool.Pool, logger *slog.Logger) {
-	service := NewService(pool, logger)
+func RegisterRoutes(api huma.API, querier db.Querier, logger *slog.Logger) {
+	service := NewService(querier, logger)
 
 	// Register all feed-related routes with the Huma API
 	huma.Register(api, huma.Operation{

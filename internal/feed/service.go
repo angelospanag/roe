@@ -8,26 +8,28 @@ import (
 
 	"github.com/angelospanag/roe/internal/db"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/mmcdole/gofeed"
 )
 
 // Service handles RSS feed operations
 type Service struct {
-	queries *db.Queries
-	pool    *pgxpool.Pool
+	queries db.Querier
 	parser  *gofeed.Parser
 	logger  *slog.Logger
 }
 
 // NewService creates a new feed service
-func NewService(pool *pgxpool.Pool, logger *slog.Logger) *Service {
+func NewService(querier db.Querier, logger *slog.Logger) *Service {
 	return &Service{
-		queries: db.New(pool),
-		pool:    pool,
+		queries: querier,
 		parser:  gofeed.NewParser(),
 		logger:  logger,
 	}
+}
+
+// GetQueries returns the database queries instance
+func (s *Service) GetQueries() db.Querier {
+	return s.queries
 }
 
 // RefreshFeed fetches and updates posts for a specific feed
@@ -156,9 +158,4 @@ func (s *Service) RefreshAllFeeds(ctx context.Context) (int, int, error) {
 		totalPostsAdded,
 	)
 	return feedsUpdated, totalPostsAdded, nil
-}
-
-// GetQueries returns the database queries instance
-func (s *Service) GetQueries() *db.Queries {
-	return s.queries
 }

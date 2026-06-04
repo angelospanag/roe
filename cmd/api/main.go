@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/angelospanag/roe/internal/db"
 	"github.com/angelospanag/roe/internal/feed"
 	"github.com/angelospanag/roe/internal/post"
 	"github.com/danielgtaylor/huma/v2"
@@ -48,6 +49,8 @@ func main() {
 	}
 	logger.Info("database connection established")
 
+	queries := db.New(pool)
+
 	// Create router
 	router := chi.NewMux()
 
@@ -55,8 +58,8 @@ func main() {
 	api := humachi.New(router, huma.DefaultConfig("ROE API", "1.0.0"))
 
 	// Register routes
-	feed.RegisterRoutes(api, pool, logger)
-	post.RegisterRoutes(api, pool, logger)
+	feed.RegisterRoutes(api, queries, logger)
+	post.RegisterRoutes(api, queries, logger)
 
 	// Get port from environment
 	port := os.Getenv("PORT")

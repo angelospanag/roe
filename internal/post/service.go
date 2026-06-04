@@ -5,25 +5,24 @@ import (
 	"log/slog"
 
 	"github.com/angelospanag/roe/internal/db"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Service handles post operations
 type Service struct {
-	queries *db.Queries
+	queries db.Querier
 	logger  *slog.Logger
 }
 
 // NewService creates a new post service
-func NewService(pool *pgxpool.Pool, logger *slog.Logger) *Service {
+func NewService(querier db.Querier, logger *slog.Logger) *Service {
 	return &Service{
-		queries: db.New(pool),
+		queries: querier,
 		logger:  logger,
 	}
 }
 
 // GetQueries returns the database queries interface
-func (s *Service) GetQueries() *db.Queries {
+func (s *Service) GetQueries() db.Querier {
 	return s.queries
 }
 
