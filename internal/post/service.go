@@ -38,12 +38,18 @@ func (s *Service) CountUnreadPostsByFeed(ctx context.Context, feedID int32) (int
 }
 
 // ListPostsByFeed lists posts for a specific feed
-func (s *Service) ListPostsByFeed(ctx context.Context, params db.ListPostsByFeedParams) ([]db.Post, error) {
+func (s *Service) ListPostsByFeed(
+	ctx context.Context,
+	params db.ListPostsByFeedParams,
+) ([]db.Post, error) {
 	return s.queries.ListPostsByFeed(ctx, params)
 }
 
 // ListUnreadPostsByFeed lists unread posts for a specific feed
-func (s *Service) ListUnreadPostsByFeed(ctx context.Context, params db.ListUnreadPostsByFeedParams) ([]db.Post, error) {
+func (s *Service) ListUnreadPostsByFeed(
+	ctx context.Context,
+	params db.ListUnreadPostsByFeedParams,
+) ([]db.Post, error) {
 	return s.queries.ListUnreadPostsByFeed(ctx, params)
 }
 
@@ -53,7 +59,10 @@ func (s *Service) ListPosts(ctx context.Context, params db.ListPostsParams) ([]d
 }
 
 // ListUnreadPosts lists all unread posts
-func (s *Service) ListUnreadPosts(ctx context.Context, params db.ListUnreadPostsParams) ([]db.Post, error) {
+func (s *Service) ListUnreadPosts(
+	ctx context.Context,
+	params db.ListUnreadPostsParams,
+) ([]db.Post, error) {
 	return s.queries.ListUnreadPosts(ctx, params)
 }
 

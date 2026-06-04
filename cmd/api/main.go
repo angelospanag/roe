@@ -76,7 +76,11 @@ func main() {
 	// Start server in a goroutine
 	go func() {
 		logger.Info("starting server", "port", port)
-		logger.Info("API documentation available at", "url", fmt.Sprintf("http://localhost:%s/docs", port))
+		logger.Info(
+			"API documentation available at",
+			"url",
+			fmt.Sprintf("http://localhost:%s/docs", port),
+		)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error("server error", "error", err)
 			os.Exit(1)
