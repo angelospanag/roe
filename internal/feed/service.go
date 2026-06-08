@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/angelospanag/roe/internal/db"
+	apimiddleware "github.com/angelospanag/roe/internal/middleware"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/mmcdole/gofeed"
 )
@@ -34,7 +35,8 @@ func (s *Service) GetQueries() db.Querier {
 
 // RefreshFeed fetches and updates posts for a specific feed
 func (s *Service) RefreshFeed(ctx context.Context, feedID int32) (int, error) {
-	s.logger.Info("refreshing feed", "feed_id", feedID)
+	logger := apimiddleware.LoggerFromContext(ctx)
+	logger.Info("refreshing feed", "feed_id", feedID)
 
 	// Get feed details
 	feed, err := s.queries.GetFeed(ctx, feedID)
@@ -67,7 +69,7 @@ func (s *Service) RefreshFeed(ctx context.Context, feedID int32) (int, error) {
 		}),
 	})
 	if err != nil {
-		s.logger.Error("failed to update feed metadata", "error", err)
+		logger.Error("failed to update feed metadata", "error", err)
 	}
 
 	// Add/update posts
@@ -112,7 +114,7 @@ func (s *Service) RefreshFeed(ctx context.Context, feedID int32) (int, error) {
 		})
 
 		if err != nil {
-			s.logger.Warn("failed to create post", "error", err, "guid", guid)
+			logger.Warn("failed to create post", "error", err, "guid", guid)
 		} else {
 			postsAdded++
 		}
@@ -121,16 +123,17 @@ func (s *Service) RefreshFeed(ctx context.Context, feedID int32) (int, error) {
 	// Update last fetched timestamp
 	err = s.queries.UpdateFeedLastFetched(ctx, feedID)
 	if err != nil {
-		s.logger.Error("failed to update last fetched timestamp", "error", err)
+		logger.Error("failed to update last fetched timestamp", "error", err)
 	}
 
-	s.logger.Info("feed refreshed", "feed_id", feedID, "posts_added", postsAdded)
+	logger.Info("feed refreshed", "feed_id", feedID, "posts_added", postsAdded)
 	return postsAdded, nil
 }
 
 // RefreshAllFeeds fetches and updates posts for all feeds
 func (s *Service) RefreshAllFeeds(ctx context.Context) (int, int, error) {
-	s.logger.Info("refreshing all feeds")
+	logger := apimiddleware.LoggerFromContext(ctx)
+	logger.Info("refreshing all feeds")
 
 	feeds, err := s.queries.ListFeeds(ctx)
 	if err != nil {
@@ -143,14 +146,14 @@ func (s *Service) RefreshAllFeeds(ctx context.Context) (int, int, error) {
 	for _, feed := range feeds {
 		postsAdded, err := s.RefreshFeed(ctx, feed.ID)
 		if err != nil {
-			s.logger.Error("failed to refresh feed", "feed_id", feed.ID, "error", err)
+			logger.Error("failed to refresh feed", "feed_id", feed.ID, "error", err)
 			continue
 		}
 		feedsUpdated++
 		totalPostsAdded += postsAdded
 	}
 
-	s.logger.Info(
+	logger.Info(
 		"all feeds refreshed",
 		"feeds_updated",
 		feedsUpdated,

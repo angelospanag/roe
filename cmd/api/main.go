@@ -12,6 +12,7 @@ import (
 
 	"github.com/angelospanag/roe/internal/db"
 	"github.com/angelospanag/roe/internal/feed"
+	apimiddleware "github.com/angelospanag/roe/internal/middleware"
 	"github.com/angelospanag/roe/internal/post"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
@@ -53,6 +54,7 @@ func main() {
 
 	// Create router
 	router := chi.NewMux()
+	router.Use(apimiddleware.RequestID(logger))
 
 	// Create Huma API
 	api := humachi.New(router, huma.DefaultConfig("ROE API", "1.0.0"))
