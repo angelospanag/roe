@@ -11,9 +11,9 @@ jobs:
     name: Lint (Backend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
@@ -26,9 +26,9 @@ jobs:
     name: Vulnerability audit (Backend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
 
       - run: mise -C api run vuln
 
@@ -36,9 +36,9 @@ jobs:
     name: Lint (Frontend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
 
       - run: mise -C ui run install
 
@@ -48,9 +48,9 @@ jobs:
     name: Vulnerability audit (Frontend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
 
       - run: mise -C ui run install
 
@@ -60,9 +60,9 @@ jobs:
     name: Test (Backend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
 
       - run: mise -C api run test
 
@@ -70,9 +70,9 @@ jobs:
     name: Typecheck (Frontend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
 
       - run: mise -C ui run install
 
@@ -84,7 +84,7 @@ jobs:
     needs: [lint-backend, vuln-backend, lint-frontend, vuln-frontend, test-backend, typecheck-frontend]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build API image
         run: podman build -f Containerfile -t roe-api:${{ github.sha }} .
