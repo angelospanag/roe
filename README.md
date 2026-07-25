@@ -22,7 +22,7 @@ roe/
 ├── ui/               Next.js 16 frontend
 │   └── client/       Generated TypeScript client (`mise run generate`)
 ├── compose.yml       Full-stack Podman Compose (api + ui + postgres)
-└── .github/          CI (lint · test · typecheck · build)
+└── .github/          CI (backend: lint · vuln · test — frontend: lint · vuln · typecheck — build)
 ```
 
 ## Stack
@@ -79,10 +79,13 @@ The Next.js dev server proxies `/api/*` to `:8080` — no CORS config needed.
 
 Root `mise.toml` exposes cross-project aggregates and Podman tasks. Service-specific tasks run from inside `api/` or `ui/` (or via `mise -C <dir>`).
 
+Root-level commands run against **both** the backend (`api/`) and frontend (`ui/`):
+
 | Command                 | Description                                      |
 | ------------------------ | ------------------------------------------------ |
 | `mise run fmt`          | Format all code (Go + TypeScript)                |
 | `mise run lint`         | Lint all code (Go + TypeScript)                  |
+| `mise run vuln`         | Scan all dependencies for known vulnerabilities (Go + TypeScript) |
 | `mise run test`         | Run Go tests                                     |
 | `mise run deps`         | Update all dependencies (Go + Bun)               |
 | `mise run generate`     | Regenerate OpenAPI schema then TypeScript client |
@@ -90,26 +93,27 @@ Root `mise.toml` exposes cross-project aggregates and Podman tasks. Service-spec
 | `mise run compose:down` | Stop all services                                |
 | `mise run compose:logs` | Follow compose logs                              |
 
-| API command (`cd api/`) | Description                           |
-| ------------------------ | -------------------------------------- |
+| API / backend command (`cd api/`) | Description                           |
+| ----------------------------------- | -------------------------------------- |
 | `mise run dev`           | Start the Go API on :8080             |
 | `mise run build`         | Build for current platform            |
 | `mise run test`          | Run tests                             |
 | `mise run fmt`           | Format code via `golangci-lint fmt`   |
 | `mise run lint`          | Run linters via `golangci-lint run`   |
-| `mise run vuln`          | Scan dependencies for vulnerabilities |
+| `mise run vuln`          | Scan Go dependencies for known vulnerabilities (govulncheck) |
 | `mise run deps`          | Update and tidy dependencies          |
 | `mise run schema`        | Generate OpenAPI spec to openapi.yaml |
 | `mise run generate`      | Generate sqlc bindings from SQL schema|
 | `mise run clean`         | Remove build artifacts                |
 
-| UI command (`cd ui/`) | Description                           |
-| ---------------------- | -------------------------------------- |
+| UI / frontend command (`cd ui/`) | Description                           |
+| ----------------------------------- | -------------------------------------- |
 | `mise run dev`         | Start the Next.js dev server on :3000 |
 | `mise run build`       | Production Next.js build              |
 | `mise run typecheck`   | TypeScript type check                 |
 | `mise run fmt`         | Format code with Biome                |
 | `mise run lint`        | Biome check                           |
+| `mise run vuln`        | Scan TypeScript dependencies for known vulnerabilities (`bun audit`) |
 | `mise run generate`    | Generate TypeScript client from ../api/openapi.yaml |
 
 ## API Endpoints

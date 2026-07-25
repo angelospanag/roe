@@ -33,6 +33,10 @@ run = "bun run lint"
 description = "Generate TypeScript client from ../api/openapi.yaml"
 run = "bun run generate"
 
+[tasks.vuln]
+description = "Scan dependencies for known vulnerabilities"
+run = "bun audit"
+
 [tasks.deps]
 description = "Update dependencies within package.json version ranges"
 run = "bun update"

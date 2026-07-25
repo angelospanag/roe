@@ -107,6 +107,7 @@ mise run build       # production build (standalone output)
 mise run typecheck   # tsc --noEmit
 mise run lint        # Biome check
 mise run fmt         # Biome format --write
+mise run vuln        # bun audit — scan dependencies for known vulnerabilities
 mise run generate    # regenerate client/ from ../api/openapi.yaml
 ```
 

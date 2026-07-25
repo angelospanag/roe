@@ -13,7 +13,7 @@ roe/
 ├── ui/               Next.js 16 frontend
 │   └── client/       Generated TypeScript client (`mise run generate`)
 ├── compose.yml       Full-stack Podman Compose (api + ui + postgres)
-└── .github/          CI (lint · vuln · test · typecheck · build)
+└── .github/          CI (backend: lint · vuln · test — frontend: lint · vuln · typecheck — build)
 ```
 
 See `api/CLAUDE.md` and `ui/CLAUDE.md` for per-service details.
@@ -34,13 +34,14 @@ For local development, run each service separately — see their CLAUDE.md files
 
 ## CI (GitHub Actions)
 
-Six jobs on push/PR to `main`:
-- **lint** — golangci-lint on the Go code
-- **vuln** — govulncheck on Go dependencies
+Seven jobs on push/PR to `main`:
+- **lint-backend** — golangci-lint on the Go code
+- **vuln-backend** — govulncheck on Go dependencies
 - **lint-frontend** — Biome check on the TypeScript code
-- **test** — `go test ./...` (routes are tested against a mocked `db.Querier`, no live database needed)
+- **vuln-frontend** — `bun audit` on TypeScript dependencies
+- **test-backend** — `go test ./...` (routes are tested against a mocked `db.Querier`, no live database needed)
 - **typecheck-frontend** — `tsc --noEmit`
-- **build** — Podman image builds (depends on the five above)
+- **build** — Podman image builds (depends on the six above)
 
 Task runner is `mise` — see `mise.toml` for task definitions.
 
