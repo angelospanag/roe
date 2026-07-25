@@ -7,18 +7,77 @@ on:
     branches: [main]
 
 jobs:
-  checks:
+  lint:
+    name: Lint (Go)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: jdx/mise-action@v2
 
-      - name: Lint
-        run: mise run lint
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
+          args: --timeout=5m
+          working-directory: api
 
-      - name: Vulnerability audit
-        run: mise run vuln
+  vuln:
+    name: Vulnerability audit (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Run tests
-        run: mise run test
+      - uses: jdx/mise-action@v2
+
+      - run: mise -C api run vuln
+
+  lint-frontend:
+    name: Lint (TS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+
+      - run: mise -C ui run install
+
+      - run: mise -C ui run lint
+
+  test:
+    name: Test (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+
+      - run: mise -C api run test
+
+  typecheck-frontend:
+    name: Typecheck (TS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+
+      - run: mise -C ui run install
+
+      - run: mise -C ui run typecheck
+
+  build:
+    name: Build images
+    runs-on: ubuntu-latest
+    needs: [lint, vuln, lint-frontend, test, typecheck-frontend]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build API image
+        run: podman build -f Containerfile -t roe-api:${{ github.sha }} .
+        working-directory: api
+
+      - name: Build UI image
+        run: podman build -f Containerfile -t roe-ui:${{ github.sha }} .
+        working-directory: ui

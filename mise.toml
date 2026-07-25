@@ -1,40 +1,52 @@
-[tools]
-go = "1.26.4"
-golangci-lint = "2.12.2"
-sqlc = "1.31.1"
+# Root mise.toml — cross-project aggregates and Podman tasks only.
+# Single-service tasks live in api/mise.toml and ui/mise.toml.
 
-[tasks.dev]
-description = "🚀 Run without building a binary"
-run = "go run ./cmd/api"
+# ── Install ───────────────────────────────────────────────────────────────────
 
-[tasks.build]
-description = "📦 Build for current platform"
-run = "go build -o bin/app ./cmd/api"
+[tasks.install]
+description = "Install all tools"
+run = ["mise -C {{config_root}}/api install", "mise -C {{config_root}}/ui install"]
 
-[tasks.test]
-description = "🧪 Run tests"
-run = "go test ./..."
+# ── Format ────────────────────────────────────────────────────────────────────
 
 [tasks.fmt]
-description = "✨ Format code with golangci-lint"
-run = "golangci-lint fmt"
+description = "Format all code (Go + TypeScript)"
+run = ["mise -C {{config_root}}/api run fmt", "mise -C {{config_root}}/ui run fmt"]
+
+# ── Lint ──────────────────────────────────────────────────────────────────────
 
 [tasks.lint]
-description = "🔍 Run linters"
-run = "golangci-lint run"
+description = "Lint all code (Go + TypeScript)"
+run = ["mise -C {{config_root}}/api run lint", "mise -C {{config_root}}/ui run lint"]
 
-[tasks.vuln]
-description = "🛡️ Scan dependencies for known vulnerabilities"
-run = "go tool govulncheck ./..."
+# ── Test ──────────────────────────────────────────────────────────────────────
+
+[tasks.test]
+description = "Run all tests (Go)"
+run = "mise -C {{config_root}}/api run test"
+
+# ── Dependencies ──────────────────────────────────────────────────────────────
 
 [tasks.deps]
-description = "📥 Update and tidy dependencies"
-run = ["go get -u ./...", "go get -u tool", "go mod tidy"]
+description = "Update all dependencies (Go + Bun)"
+run = ["mise -C {{config_root}}/api run deps", "mise -C {{config_root}}/ui run deps"]
+
+# ── Generate ──────────────────────────────────────────────────────────────────
 
 [tasks.generate]
-description = "⚙️ Generate sqlc bindings from SQL schema"
-run = "sqlc generate"
+description = "Regenerate OpenAPI schema then TypeScript client"
+run = ["mise -C {{config_root}}/api run schema", "mise -C {{config_root}}/ui run generate"]
 
-[tasks.clean]
-description = "🧹 Remove build artifacts"
-run = "rm -rf bin"
+# ── Podman Compose ────────────────────────────────────────────────────────────
+
+[tasks."compose:up"]
+description = "Build and start all services in the background"
+run = "podman compose up --build -d"
+
+[tasks."compose:down"]
+description = "Stop and remove containers"
+run = "podman compose down"
+
+[tasks."compose:logs"]
+description = "Follow logs for all services"
+run = "podman compose logs -f"

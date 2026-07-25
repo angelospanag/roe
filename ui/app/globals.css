@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/* ── Brand tokens ──────────────────────────────────────────────────────────── */
+/* Warm, paper-like reading surface with the classic RSS orange as the accent —
+   editorial rather than dashboard-blue. */
+:root {
+  --color-bg: #faf7f2;
+  --color-surface: #fffdfa;
+  --color-surface-hover: #f3ede2;
+  --color-border: #e7ded0;
+  --color-text: #2a2521;
+  --color-text-muted: #8a7f70;
+  --color-accent: #ea580c;
+  --color-accent-hover: #c2410c;
+  --color-accent-soft: #fdecdc;
+  --color-danger: #b91c1c;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-jetbrains-mono), monospace;
+  --font-serif: var(--font-source-serif), Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1815;
+    --color-surface: #241f1a;
+    --color-surface-hover: #2d2620;
+    --color-border: #3a322a;
+    --color-text: #f2ece2;
+    --color-text-muted: #a89a86;
+    --color-accent: #fb923c;
+    --color-accent-hover: #fdba74;
+    --color-accent-soft: #3a2515;
+    --color-danger: #f87171;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+.font-serif-content {
+  font-family: var(--font-serif);
+}
+
+.prose-content :where(p) {
+  margin: 0 0 0.85em;
+  line-height: 1.7;
+}
+
+.prose-content :where(a) {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-content :where(img) {
+  max-width: 100%;
+  border-radius: 0.375rem;
+}

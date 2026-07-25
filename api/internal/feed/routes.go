@@ -99,12 +99,13 @@ func RegisterRoutes(api huma.API, querier db.Querier, logger *slog.Logger) {
 
 	// Register all feed-related routes with the Huma API
 	huma.Register(api, huma.Operation{
-		OperationID: "create-feed",
-		Method:      http.MethodPost,
-		Path:        "/feeds",
-		Summary:     "Create a new RSS feed",
-		Description: "Add a new RSS feed to follow",
-		Tags:        []string{"feeds"},
+		OperationID:   "create-feed",
+		Method:        http.MethodPost,
+		Path:          "/feeds",
+		Summary:       "Create a new RSS feed",
+		Description:   "Add a new RSS feed to follow",
+		Tags:          []string{"feeds"},
+		DefaultStatus: http.StatusCreated,
 	}, func(ctx context.Context, input *CreateInput) (*CreateOutput, error) {
 		logger := apimiddleware.LoggerFromContext(ctx)
 		logger.Info("creating feed", "url", input.Body.URL)
