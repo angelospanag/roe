@@ -12,7 +12,7 @@ REST + OpenAPI API.
 | Config | `caarlos0/env/v11` (struct tags on `internal/config.Config`) |
 | Database | PostgreSQL via `pgx/v5` (`pgxpool`) |
 | Query layer | SQLC — hand-written SQL in `db/queries`, generated code in `internal/db` |
-| Migrations | `pressly/goose/v3` as a library, embedded SQL files, own `cmd/migrate` binary |
+| Migrations | `pressly/goose/v3` — `go tool` dependency, no separate install needed |
 | Feed parsing | `mmcdole/gofeed` |
 | Module path | `github.com/angelospanag/roe` |
 
@@ -20,9 +20,7 @@ REST + OpenAPI API.
 
 ```
 api/
-├── cmd/
-│   ├── api/main.go              Entry point: config → pgxpool → router → server; `openapi` subcommand prints the spec
-│   └── migrate/main.go          Standalone binary: `migrate <up|down|status>` — plain stdlib CLI, no cobra/humacli
+├── cmd/api/main.go             Entry point: config → pgxpool → router → server; `openapi` subcommand prints the spec
 ├── internal/
 │   ├── config/
 │   │   └── config.go            Env-var config struct (PORT, DATABASE_URL)
@@ -38,11 +36,9 @@ api/
 │   │   └── models.go            Request/response types
 │   └── db/                      SQLC-generated code — do not hand-edit
 │       ├── db.go, models.go, querier.go, feeds.sql.go, posts.sql.go
-└── db/
-    ├── migrations/
-    │   ├── embed.go              //go:embed *.sql — compiled into cmd/migrate, not read from disk at runtime
-    │   └── NNNNN_description.sql goose migrations (-- +goose Up / -- +goose Down sections)
-    └── queries/                  Hand-written SQL — source for SQLC codegen
+├── db/
+│   ├── migrations/               goose migrations (-- +goose Up/Down), applied via `mise run migrate`
+│   └── queries/                  Hand-written SQL — source for SQLC codegen
 ```
 
 ## Route registration pattern
@@ -94,24 +90,18 @@ openapi` working without a live Postgres connection.
 
 ## Migrations
 
-Files live in `db/migrations/`, named `NNNNN_description.sql`, with `-- +goose Up` / `-- +goose Down` sections, and
-are embedded into the binary via `db/migrations/embed.go`'s `//go:embed *.sql`.
-
-`cmd/migrate` is a **separate binary** from `cmd/api`, deliberately not a subcommand of it: `humacli`'s setup closure
-runs for every subcommand of `cmd/api` (see below), which would mean every `migrate` invocation builds the full
-router and registers all routes for no reason. `cmd/migrate`'s `main()` is plain stdlib (`os.Args`, no cobra) since
-it's a single fixed 3-command tool.
+Files live in `db/migrations/`, named `NNNNN_description.sql`, with `-- +goose Up` / `-- +goose Down` sections.
+goose is a `go tool` dependency (see `go.mod`'s `tool` block) — no separate binary to install.
 
 ```bash
-mise run migrate                    # applies pending migrations (DATABASE_URL)
-go run ./cmd/migrate up
-go run ./cmd/migrate down
-go run ./cmd/migrate status
+mise run migrate                                          # applies pending migrations (DATABASE_URL)
+go tool goose -dir db/migrations postgres "$DATABASE_URL" status
+go tool goose -dir db/migrations postgres "$DATABASE_URL" down
+go tool goose -dir db/migrations create <name> sql         # scaffold a new migration file
 ```
 
 Not run automatically — not on `api` startup, not by `podman compose up`. It's a manual step against Postgres's
-host-exposed port (`mise -C api run migrate`) after `postgres` is healthy. `cmd/migrate` isn't built into any
-Containerfile either, only `cmd/api` is.
+host-exposed port (`mise -C api run migrate`) after `postgres` is healthy.
 
 ## Dev
 

@@ -41,7 +41,7 @@ run = "sqlc generate"
 
 [tasks.migrate]
 description = "Run pending DB migrations (set DATABASE_URL)"
-run = "go run ./cmd/migrate up"
+run = "go tool goose -dir db/migrations postgres \"$DATABASE_URL\" up"
 
 [tasks.clean]
 description = "Remove build artifacts"
