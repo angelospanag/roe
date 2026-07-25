@@ -5,19 +5,28 @@
 
 [tasks.install]
 description = "Install all tools"
-run = ["mise -C {{config_root}}/api install", "mise -C {{config_root}}/ui install"]
+run = [
+  "mise -C {{config_root}}/api install",
+  "mise -C {{config_root}}/ui install",
+]
 
 # ── Format ────────────────────────────────────────────────────────────────────
 
 [tasks.fmt]
 description = "Format all code (Go + TypeScript)"
-run = ["mise -C {{config_root}}/api run fmt", "mise -C {{config_root}}/ui run fmt"]
+run = [
+  "mise -C {{config_root}}/api run fmt",
+  "mise -C {{config_root}}/ui run fmt",
+]
 
 # ── Lint ──────────────────────────────────────────────────────────────────────
 
 [tasks.lint]
 description = "Lint all code (Go + TypeScript)"
-run = ["mise -C {{config_root}}/api run lint", "mise -C {{config_root}}/ui run lint"]
+run = [
+  "mise -C {{config_root}}/api run lint",
+  "mise -C {{config_root}}/ui run lint",
+]
 
 # ── Test ──────────────────────────────────────────────────────────────────────
 
@@ -29,19 +38,28 @@ run = "mise -C {{config_root}}/api run test"
 
 [tasks.vuln]
 description = "Scan all dependencies for known vulnerabilities (Go + TypeScript)"
-run = ["mise -C {{config_root}}/api run vuln", "mise -C {{config_root}}/ui run vuln"]
+run = [
+  "mise -C {{config_root}}/api run vuln",
+  "mise -C {{config_root}}/ui run vuln",
+]
 
 # ── Dependencies ──────────────────────────────────────────────────────────────
 
 [tasks.deps]
 description = "Update all dependencies (Go + Bun)"
-run = ["mise -C {{config_root}}/api run deps", "mise -C {{config_root}}/ui run deps"]
+run = [
+  "mise -C {{config_root}}/api run deps",
+  "mise -C {{config_root}}/ui run deps",
+]
 
 # ── Generate ──────────────────────────────────────────────────────────────────
 
 [tasks.generate]
 description = "Regenerate OpenAPI schema then TypeScript client"
-run = ["mise -C {{config_root}}/api run schema", "mise -C {{config_root}}/ui run generate"]
+run = [
+  "mise -C {{config_root}}/api run schema",
+  "mise -C {{config_root}}/ui run generate",
+]
 
 # ── Podman Compose ────────────────────────────────────────────────────────────
 
