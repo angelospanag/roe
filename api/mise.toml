@@ -40,8 +40,8 @@ description = "Generate sqlc bindings from SQL schema"
 run = "sqlc generate"
 
 [tasks.migrate]
-description = "Run pending DB migrations (set DATABASE_URL, or DB_USER/DB_PASSWORD/DB_HOST/DB_PORT/DB_NAME)"
-run = "./scripts/setup-db.sh"
+description = "Run pending DB migrations (set DATABASE_URL)"
+run = "go run ./cmd/migrate up"
 
 [tasks.clean]
 description = "Remove build artifacts"
