@@ -12,10 +12,16 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
+// FeedParser fetches and parses a feed URL. Satisfied by *gofeed.Parser;
+// exists so tests can substitute a stub instead of hitting the network.
+type FeedParser interface {
+	ParseURLWithContext(feedURL string, ctx context.Context) (*gofeed.Feed, error)
+}
+
 // Service handles RSS feed operations
 type Service struct {
 	queries db.Querier
-	parser  *gofeed.Parser
+	parser  FeedParser
 	logger  *slog.Logger
 }
 
@@ -31,6 +37,16 @@ func NewService(querier db.Querier, logger *slog.Logger) *Service {
 // GetQueries returns the database queries instance
 func (s *Service) GetQueries() db.Querier {
 	return s.queries
+}
+
+// ValidateFeed fetches feedURL and confirms it parses as RSS/Atom, without
+// storing anything. Used at feed-creation time so a bad URL is rejected
+// immediately instead of silently failing on the next refresh.
+func (s *Service) ValidateFeed(ctx context.Context, feedURL string) error {
+	if _, err := s.parser.ParseURLWithContext(feedURL, ctx); err != nil {
+		return fmt.Errorf("not a valid RSS/Atom feed: %w", err)
+	}
+	return nil
 }
 
 // RefreshFeed fetches and updates posts for a specific feed

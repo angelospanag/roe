@@ -13,8 +13,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    # distroless has no shell tools, so no in-container healthcheck.
-    # The API is reachable at :8080 for external checks.
 
   ui:
     build:

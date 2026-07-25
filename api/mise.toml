@@ -39,6 +39,10 @@ run = "go run ./cmd/api openapi > openapi.yaml"
 description = "Generate sqlc bindings from SQL schema"
 run = "sqlc generate"
 
+[tasks.migrate]
+description = "Run pending DB migrations (set DATABASE_URL, or DB_USER/DB_PASSWORD/DB_HOST/DB_PORT/DB_NAME)"
+run = "./scripts/setup-db.sh"
+
 [tasks.clean]
 description = "Remove build artifacts"
 run = "rm -rf bin"

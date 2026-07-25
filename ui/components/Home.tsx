@@ -1,16 +1,17 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Rss } from "lucide-react";
 import { useState } from "react";
+import { countUnreadOptions } from "@/client/@tanstack/react-query.gen";
 import { FeedSidebar } from "@/components/FeedSidebar";
 import { PostList } from "@/components/PostList";
-import { useGlobalUnreadCount } from "@/lib/queries";
 
 export function Home() {
   const [selectedFeedId, setSelectedFeedId] = useState<number | null>(null);
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [offset, setOffset] = useState(0);
-  const { data: unreadCount } = useGlobalUnreadCount();
+  const { data: unread } = useQuery(countUnreadOptions());
 
   function selectFeed(feedId: number | null) {
     setSelectedFeedId(feedId);
@@ -31,9 +32,9 @@ export function Home() {
           strokeWidth={2.5}
         />
         <h1 className="font-serif-content text-xl font-semibold italic">Roe</h1>
-        {!!unreadCount && (
+        {!!unread?.count && (
           <span className="ml-2 rounded-full bg-[var(--color-accent-soft)] px-2 py-0.5 text-xs font-medium text-[var(--color-accent)]">
-            {unreadCount} unread
+            {unread.count} unread
           </span>
         )}
       </header>

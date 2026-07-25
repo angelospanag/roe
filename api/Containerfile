@@ -13,8 +13,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     -o /roe ./cmd/api
 
 # ── Final stage ───────────────────────────────────────────────────────────────
-# distroless/static-debian13:nonroot — no shell, no package manager.
-# ca-certificates and the nonroot user (uid 65532) are included by default.
 FROM gcr.io/distroless/static-debian13:nonroot
 
 COPY --from=builder /roe /roe

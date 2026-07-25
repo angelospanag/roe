@@ -1,16 +1,18 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCheck, Loader2, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import type { FeedResponse } from "@/client";
 import {
-  useCreateFeed,
-  useDeleteFeed,
-  useFeeds,
-  useFeedUnreadCount,
-  useMarkAllRead,
-  useRefreshFeeds,
-} from "@/lib/queries";
+  countUnreadByFeedOptions,
+  createFeedMutation,
+  deleteFeedMutation,
+  listFeedsOptions,
+  listFeedsQueryKey,
+  markAllReadMutation,
+  refreshFeedsMutation,
+} from "@/client/@tanstack/react-query.gen";
 
 function FeedRow({
   feed,
@@ -21,9 +23,25 @@ function FeedRow({
   selected: boolean;
   onSelect: () => void;
 }) {
-  const { data: unreadCount } = useFeedUnreadCount(feed.id);
-  const markAllRead = useMarkAllRead();
-  const deleteFeed = useDeleteFeed();
+  const queryClient = useQueryClient();
+  const { data: unreadCount } = useQuery(
+    countUnreadByFeedOptions({ path: { id: feed.id } }),
+  );
+  const markAllRead = useMutation({
+    ...markAllReadMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [{ _id: "listPosts" }] });
+      queryClient.invalidateQueries({ queryKey: [{ _id: "countUnread" }] });
+      queryClient.invalidateQueries({
+        queryKey: [{ _id: "countUnreadByFeed" }],
+      });
+    },
+  });
+  const deleteFeed = useMutation({
+    ...deleteFeedMutation(),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: listFeedsQueryKey() }),
+  });
 
   return (
     <div
@@ -41,7 +59,7 @@ function FeedRow({
       >
         {feed.title}
       </button>
-      {!!unreadCount && (
+      {!!unreadCount?.count && (
         <span
           className={`shrink-0 rounded-full px-1.5 py-0.5 text-xs font-medium ${
             selected
@@ -49,12 +67,12 @@ function FeedRow({
               : "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
           }`}
         >
-          {unreadCount}
+          {unreadCount.count}
         </span>
       )}
       <button
         type="button"
-        onClick={() => markAllRead.mutate(feed.id)}
+        onClick={() => markAllRead.mutate({ path: { id: feed.id } })}
         disabled={markAllRead.isPending}
         title="Mark all as read"
         className="hidden shrink-0 opacity-70 hover:opacity-100 group-hover:block"
@@ -65,7 +83,7 @@ function FeedRow({
         type="button"
         onClick={() => {
           if (confirm(`Delete "${feed.title}" and all its posts?`)) {
-            deleteFeed.mutate(feed.id);
+            deleteFeed.mutate({ path: { id: feed.id } });
           }
         }}
         disabled={deleteFeed.isPending}
@@ -79,17 +97,23 @@ function FeedRow({
 }
 
 function AddFeedForm({ onDone }: { onDone: () => void }) {
-  const createFeed = useCreateFeed();
+  const queryClient = useQueryClient();
+  const createFeed = useMutation({
+    ...createFeedMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: listFeedsQueryKey() });
+      onDone();
+    },
+  });
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!url.trim()) return;
-    createFeed.mutate(
-      { url: url.trim(), title: title.trim() || url.trim() },
-      { onSuccess: onDone },
-    );
+    createFeed.mutate({
+      body: { url: url.trim(), title: title.trim() || url.trim() },
+    });
   }
 
   return (
@@ -109,9 +133,10 @@ function AddFeedForm({ onDone }: { onDone: () => void }) {
         placeholder="Title (optional)"
         className="rounded border bg-[var(--color-surface)] px-2 py-1 text-sm outline-none focus:border-[var(--color-accent)]"
       />
-      {createFeed.isError && (
+      {createFeed.error && (
         <p className="text-xs text-[var(--color-danger)]">
-          Could not add feed — check the URL and try again.
+          {createFeed.error.detail ??
+            "Could not add feed — check the URL and try again."}
         </p>
       )}
       <div className="flex gap-2">
@@ -141,8 +166,19 @@ export function FeedSidebar({
   selectedFeedId: number | null;
   onSelectFeed: (feedId: number | null) => void;
 }) {
-  const { data: feeds, isLoading } = useFeeds();
-  const refreshFeeds = useRefreshFeeds();
+  const queryClient = useQueryClient();
+  const { data: feeds, isLoading } = useQuery(listFeedsOptions());
+  const refreshFeeds = useMutation({
+    ...refreshFeedsMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: listFeedsQueryKey() });
+      queryClient.invalidateQueries({ queryKey: [{ _id: "listPosts" }] });
+      queryClient.invalidateQueries({ queryKey: [{ _id: "countUnread" }] });
+      queryClient.invalidateQueries({
+        queryKey: [{ _id: "countUnreadByFeed" }],
+      });
+    },
+  });
   const [adding, setAdding] = useState(false);
 
   return (
@@ -154,7 +190,7 @@ export function FeedSidebar({
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => refreshFeeds.mutate(undefined)}
+            onClick={() => refreshFeeds.mutate({ body: {} })}
             disabled={refreshFeeds.isPending}
             title="Refresh all feeds"
             className="rounded p-1 hover:bg-[var(--color-surface-hover)]"

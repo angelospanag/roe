@@ -10,8 +10,7 @@ COPY . .
 RUN bun run build
 
 # ── Run stage ─────────────────────────────────────────────────────────────────
-# Standalone output — Next.js server handles /api/* proxying at runtime.
-FROM oven/bun:1-alpine AS runner
+FROM oven/bun:distroless AS runner
 
 WORKDIR /app
 
@@ -25,7 +24,5 @@ COPY --from=builder /app/public           ./public
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
-    CMD wget -qO- http://127.0.0.1:3000/ || exit 1
-
-CMD ["bun", "server.js"]
+# No shell in distroless — no in-container healthcheck.
+ENTRYPOINT ["/usr/local/bin/bun", "server.js"]

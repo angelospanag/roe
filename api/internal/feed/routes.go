@@ -110,6 +110,14 @@ func RegisterRoutes(api huma.API, querier db.Querier, logger *slog.Logger) {
 		logger := apimiddleware.LoggerFromContext(ctx)
 		logger.Info("creating feed", "url", input.Body.URL)
 
+		if err := service.ValidateFeed(ctx, input.Body.URL); err != nil {
+			logger.Warn("feed URL failed validation", "url", input.Body.URL, "error", err)
+			return nil, huma.Error422UnprocessableEntity(
+				"could not fetch or parse a feed at this URL",
+				err,
+			)
+		}
+
 		feed, err := service.GetQueries().CreateFeed(ctx, db.CreateFeedParams{
 			Title: input.Body.Title,
 			Url:   input.Body.URL,

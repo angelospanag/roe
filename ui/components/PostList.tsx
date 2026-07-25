@@ -1,9 +1,13 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import type { PostResponse } from "@/client";
-import { useMarkPostRead, usePosts } from "@/lib/queries";
+import {
+  listPostsOptions,
+  markPostReadMutation,
+} from "@/client/@tanstack/react-query.gen";
 
 const LIMIT = 20;
 
@@ -24,11 +28,21 @@ function PostRow({
   expanded: boolean;
   onToggle: () => void;
 }) {
-  const markPostRead = useMarkPostRead();
+  const queryClient = useQueryClient();
+  const markPostRead = useMutation({
+    ...markPostReadMutation(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [{ _id: "listPosts" }] });
+      queryClient.invalidateQueries({ queryKey: [{ _id: "countUnread" }] });
+      queryClient.invalidateQueries({
+        queryKey: [{ _id: "countUnreadByFeed" }],
+      });
+    },
+  });
 
   function handleToggle() {
     if (!post.is_read) {
-      markPostRead.mutate({ postId: post.id, isRead: true });
+      markPostRead.mutate({ path: { id: post.id }, body: { is_read: true } });
     }
     onToggle();
   }
@@ -84,7 +98,10 @@ function PostRow({
             <button
               type="button"
               onClick={() =>
-                markPostRead.mutate({ postId: post.id, isRead: !post.is_read })
+                markPostRead.mutate({
+                  path: { id: post.id },
+                  body: { is_read: !post.is_read },
+                })
               }
               className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
             >
@@ -110,12 +127,16 @@ export function PostList({
   offset: number;
   onOffsetChange: (offset: number) => void;
 }) {
-  const { data: posts, isLoading } = usePosts({
-    feedId,
-    unreadOnly,
-    offset,
-    limit: LIMIT,
-  });
+  const { data: posts, isLoading } = useQuery(
+    listPostsOptions({
+      query: {
+        feed_id: feedId ?? 0,
+        unread_only: unreadOnly,
+        offset,
+        limit: LIMIT,
+      },
+    }),
+  );
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (

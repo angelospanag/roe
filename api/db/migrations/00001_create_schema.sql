@@ -1,4 +1,4 @@
--- Create feeds table
+-- +goose Up
 CREATE TABLE IF NOT EXISTS feeds (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS feeds (
 CREATE INDEX idx_feeds_url ON feeds(url);
 CREATE INDEX idx_feeds_last_fetched ON feeds(last_fetched_at);
 
--- Create posts table
 CREATE TABLE IF NOT EXISTS posts (
     id SERIAL PRIMARY KEY,
     feed_id INTEGER NOT NULL REFERENCES feeds(id) ON DELETE CASCADE,
@@ -34,3 +33,7 @@ CREATE INDEX idx_posts_feed_id ON posts(feed_id);
 CREATE INDEX idx_posts_is_read ON posts(is_read);
 CREATE INDEX idx_posts_published_at ON posts(published_at);
 CREATE INDEX idx_posts_guid ON posts(guid);
+
+-- +goose Down
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS feeds;

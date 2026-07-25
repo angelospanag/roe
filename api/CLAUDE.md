@@ -12,6 +12,7 @@ REST + OpenAPI API.
 | Config | `caarlos0/env/v11` (struct tags on `internal/config.Config`) |
 | Database | PostgreSQL via `pgx/v5` (`pgxpool`) |
 | Query layer | SQLC — hand-written SQL in `db/queries`, generated code in `internal/db` |
+| Migrations | `pressly/goose/v3` — `go tool` dependency, no separate install needed |
 | Feed parsing | `mmcdole/gofeed` |
 | Module path | `github.com/angelospanag/roe` |
 
@@ -36,9 +37,9 @@ api/
 │   └── db/                      SQLC-generated code — do not hand-edit
 │       ├── db.go, models.go, querier.go, feeds.sql.go, posts.sql.go
 ├── db/
-│   ├── migrations/               Plain SQL, applied manually (golang-migrate or psql)
+│   ├── migrations/               goose migrations (-- +goose Up/Down), applied via `mise run migrate`
 │   └── queries/                  Hand-written SQL — source for SQLC codegen
-└── scripts/setup-db.sh           Runs migrations against $DB_* env vars via golang-migrate
+└── scripts/setup-db.sh           Runs `go tool goose ... up` against $DB_* env vars
 ```
 
 ## Route registration pattern
@@ -88,11 +89,24 @@ openapi` working without a live Postgres connection.
 | `PORT` | no | `8080` | |
 | `DATABASE_URL` | no | `postgres://postgres:postgres@localhost:5432/roe_backend?sslmode=disable` | |
 
+## Migrations
+
+Files live in `db/migrations/`, named `NNNNN_description.sql`, with `-- +goose Up` / `-- +goose Down` sections.
+goose is a `go tool` dependency (see `go.mod`'s `tool` block) — no separate binary to install.
+
+```bash
+mise run migrate                                          # applies pending migrations (DATABASE_URL or DB_* env vars)
+go tool goose -dir db/migrations postgres "$DATABASE_URL" status
+go tool goose -dir db/migrations postgres "$DATABASE_URL" down
+go tool goose -dir db/migrations create <name> sql         # scaffold a new migration file
+```
+
 ## Dev
 
 ```bash
 cd api
 cp .env.example .env   # defaults work against a local Postgres on :5432
+mise run migrate        # first time only, against an empty database
 go run ./cmd/api        # starts on :8080
 ```
 

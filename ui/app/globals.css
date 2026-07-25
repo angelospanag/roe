@@ -1,36 +1,35 @@
 @import "tailwindcss";
 
 /* ── Brand tokens ──────────────────────────────────────────────────────────── */
-/* Warm, paper-like reading surface with the classic RSS orange as the accent —
-   editorial rather than dashboard-blue. */
+/* Indigo/slate — dark by default. */
 :root {
-  --color-bg: #faf7f2;
-  --color-surface: #fffdfa;
-  --color-surface-hover: #f3ede2;
-  --color-border: #e7ded0;
-  --color-text: #2a2521;
-  --color-text-muted: #8a7f70;
-  --color-accent: #ea580c;
-  --color-accent-hover: #c2410c;
-  --color-accent-soft: #fdecdc;
-  --color-danger: #b91c1c;
+  --color-bg: #0f1115;
+  --color-surface: #161922;
+  --color-surface-hover: #1e2230;
+  --color-border: #262b38;
+  --color-text: #e5e7eb;
+  --color-text-muted: #8b93a7;
+  --color-accent: #6366f1;
+  --color-accent-hover: #818cf8;
+  --color-accent-soft: #201f3d;
+  --color-danger: #f87171;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-jetbrains-mono), monospace;
   --font-serif: var(--font-source-serif), Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --color-bg: #1c1815;
-    --color-surface: #241f1a;
-    --color-surface-hover: #2d2620;
-    --color-border: #3a322a;
-    --color-text: #f2ece2;
-    --color-text-muted: #a89a86;
-    --color-accent: #fb923c;
-    --color-accent-hover: #fdba74;
-    --color-accent-soft: #3a2515;
-    --color-danger: #f87171;
+    --color-bg: #f7f8fb;
+    --color-surface: #ffffff;
+    --color-surface-hover: #eef0f5;
+    --color-border: #dfe3ea;
+    --color-text: #1a1d29;
+    --color-text-muted: #6b7280;
+    --color-accent: #4f46e5;
+    --color-accent-hover: #4338ca;
+    --color-accent-soft: #e5e4fc;
+    --color-danger: #dc2626;
   }
 }
 

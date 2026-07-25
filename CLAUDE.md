@@ -27,8 +27,8 @@ podman compose up
 # UI  → http://localhost:3000
 ```
 
-The `postgres` service has no migrations baked in — apply `api/db/migrations/*.up.sql` once against it
-(`scripts/setup-db.sh`, or `psql` directly) before the API can serve requests.
+The `postgres` service has no migrations baked in — run `mise -C api run migrate` once against it before the API
+can serve requests.
 
 For local development, run each service separately — see their CLAUDE.md files.
 
@@ -44,6 +44,8 @@ Seven jobs on push/PR to `main`:
 - **build** — Podman image builds (depends on the six above)
 
 Task runner is `mise` — see `mise.toml` for task definitions.
+
+Run `mise run fmt && mise run lint` after every change, before committing.
 
 ## Key constraints
 

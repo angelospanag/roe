@@ -6,5 +6,5 @@ export default defineConfig({
     path: "client",
     postProcess: ["biome:format"],
   },
-  plugins: ["@hey-api/client-next", "@hey-api/typescript", "@hey-api/sdk"],
+  plugins: ["@hey-api/client-next", "@tanstack/react-query"],
 });
