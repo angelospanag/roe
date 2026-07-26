@@ -1,0 +1,22 @@
+# ── Build stage ───────────────────────────────────────────────────────────────
+FROM golang:1.26.5-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -ldflags="-s -w" -trimpath \
+    -o /riffle ./cmd/api
+
+# ── Final stage ───────────────────────────────────────────────────────────────
+FROM gcr.io/distroless/static-debian13:nonroot
+
+COPY --from=builder /riffle /riffle
+
+EXPOSE 8080
+
+ENTRYPOINT ["/riffle"]

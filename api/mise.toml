@@ -1,0 +1,48 @@
+[tools]
+go = "1.26.5"
+golangci-lint = "2.12.2"
+sqlc = "1.31.1"
+
+[tasks.dev]
+description = "Run without building a binary"
+run = "go run ./cmd/api"
+
+[tasks.build]
+description = "Build for current platform"
+run = "go build -o bin/app ./cmd/api"
+
+[tasks.test]
+description = "Run tests"
+run = "go test ./..."
+
+[tasks.fmt]
+description = "Format code with golangci-lint"
+run = "golangci-lint fmt"
+
+[tasks.lint]
+description = "Run linters"
+run = "golangci-lint run"
+
+[tasks.vuln]
+description = "Scan dependencies for known vulnerabilities"
+run = "go tool govulncheck ./..."
+
+[tasks.deps]
+description = "Update and tidy dependencies"
+run = ["go get -u ./...", "go get -u tool", "go mod tidy"]
+
+[tasks.schema]
+description = "Generate OpenAPI spec to openapi.yaml"
+run = "go run ./cmd/api openapi > openapi.yaml"
+
+[tasks.generate]
+description = "Generate sqlc bindings from SQL schema"
+run = "sqlc generate"
+
+[tasks.migrate]
+description = "Run pending DB migrations (defaults to local Postgres; override with DATABASE_URL)"
+run = "go tool goose -dir db/migrations postgres \"${DATABASE_URL:-postgres://postgres:postgres@localhost:5432/riffle_backend?sslmode=disable}\" up"
+
+[tasks.clean]
+description = "Remove build artifacts"
+run = "rm -rf bin"

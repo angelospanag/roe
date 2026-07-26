@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-backend:
+    name: Lint (Backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v4
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
+          args: --timeout=5m
+          working-directory: api
+
+  vuln-backend:
+    name: Vulnerability audit (Backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v4
+
+      - run: mise -C api run vuln
+
+  lint-frontend:
+    name: Lint (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v4
+
+      - run: mise -C ui run install
+
+      - run: mise -C ui run lint
+
+  vuln-frontend:
+    name: Vulnerability audit (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v4
+
+      - run: mise -C ui run install
+
+      - run: mise -C ui run vuln
+
+  test-backend:
+    name: Test (Backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v4
+
+      - run: mise -C api run test
+
+  typecheck-frontend:
+    name: Typecheck (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v4
+
+      - run: mise -C ui run install
+
+      - run: mise -C ui run typecheck
+
+  build:
+    name: Build images
+    runs-on: ubuntu-latest
+    needs: [lint-backend, vuln-backend, lint-frontend, vuln-frontend, test-backend, typecheck-frontend]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build API image
+        run: podman build -f Containerfile -t riffle-api:${{ github.sha }} .
+        working-directory: api
+
+      - name: Build UI image
+        run: podman build -f Containerfile -t riffle-ui:${{ github.sha }} .
+        working-directory: ui

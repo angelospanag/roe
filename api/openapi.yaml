@@ -1,0 +1,660 @@
+components:
+  schemas:
+    CountUnreadOutputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CountUnreadOutputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        count:
+          examples:
+            - 42
+          format: int64
+          type: integer
+      required:
+        - count
+      type: object
+    ErrorDetail:
+      additionalProperties: false
+      properties:
+        location:
+          description: Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
+          type: string
+        message:
+          description: Error message text
+          type: string
+        value:
+          description: The value at the given location
+      type: object
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ErrorModel.json
+          format: uri
+          readOnly: true
+          type: string
+        detail:
+          description: A human-readable explanation specific to this occurrence of the problem.
+          examples:
+            - Property foo is required but is missing.
+          type: string
+        errors:
+          description: Optional list of individual error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+          type:
+            - array
+            - "null"
+        instance:
+          description: A URI reference that identifies the specific occurrence of the problem.
+          examples:
+            - https://example.com/error-log/abc123
+          format: uri
+          type: string
+        status:
+          description: HTTP status code
+          examples:
+            - 400
+          format: int64
+          type: integer
+        title:
+          description: A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+          examples:
+            - Bad Request
+          type: string
+        type:
+          default: about:blank
+          description: A URI reference to human-readable documentation for the error.
+          examples:
+            - https://example.com/errors/example
+          format: uri
+          type: string
+      type: object
+    FeedResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/FeedResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        favicon_url:
+          type: string
+        id:
+          examples:
+            - 1
+          format: int32
+          type: integer
+        last_fetched_at:
+          format: date-time
+          type: string
+        link:
+          type: string
+        title:
+          examples:
+            - TechCrunch
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          examples:
+            - https://techcrunch.com/feed/
+          type: string
+      required:
+        - id
+        - title
+        - url
+        - created_at
+        - updated_at
+      type: object
+    Input:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/Input.json
+          format: uri
+          readOnly: true
+          type: string
+        description:
+          examples:
+            - Technology news and analysis
+          type: string
+        link:
+          examples:
+            - https://techcrunch.com
+          format: uri
+          type: string
+        title:
+          examples:
+            - TechCrunch
+          maxLength: 255
+          type: string
+        url:
+          examples:
+            - https://techcrunch.com/feed/
+          format: uri
+          maxLength: 512
+          type: string
+      required:
+        - title
+        - url
+      type: object
+    MarkReadRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/MarkReadRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        is_read:
+          examples:
+            - true
+          type: boolean
+      required:
+        - is_read
+      type: object
+    PostResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/PostResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        author:
+          examples:
+            - John Doe
+          type: string
+        content:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        feed_id:
+          examples:
+            - 1
+          format: int32
+          type: integer
+        guid:
+          examples:
+            - unique-guid-123
+          type: string
+        id:
+          examples:
+            - 1
+          format: int32
+          type: integer
+        is_read:
+          examples:
+            - false
+          type: boolean
+        link:
+          examples:
+            - https://example.com/article
+          type: string
+        published_at:
+          format: date-time
+          type: string
+        title:
+          examples:
+            - Breaking News
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+        - id
+        - feed_id
+        - title
+        - link
+        - guid
+        - is_read
+        - created_at
+        - updated_at
+      type: object
+    RefreshRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/RefreshRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        feed_id:
+          description: Optional feed ID to refresh specific feed
+          examples:
+            - 1
+          format: int32
+          type: integer
+      type: object
+    RefreshResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/RefreshResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        feeds_updated:
+          examples:
+            - 5
+          format: int64
+          type: integer
+        message:
+          examples:
+            - Feeds refreshed successfully
+          type: string
+        posts_added:
+          examples:
+            - 42
+          format: int64
+          type: integer
+      required:
+        - message
+        - feeds_updated
+        - posts_added
+      type: object
+info:
+  title: Riffle API
+  version: 1.0.0
+openapi: 3.1.0
+paths:
+  /feeds:
+    get:
+      description: Retrieve all RSS feeds
+      operationId: list-feeds
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/FeedResponse"
+                type:
+                  - array
+                  - "null"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List all feeds
+      tags:
+        - feeds
+    post:
+      description: Add a new RSS feed to follow
+      operationId: create-feed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Input"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Create a new RSS feed
+      tags:
+        - feeds
+  /feeds/refresh:
+    post:
+      description: Fetch new posts from all feeds or a specific feed
+      operationId: refresh-feeds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Refresh feeds
+      tags:
+        - feeds
+  /feeds/{id}:
+    delete:
+      description: Remove an RSS feed and all its posts
+      operationId: delete-feed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Delete a feed
+      tags:
+        - feeds
+    get:
+      description: Retrieve a specific RSS feed by ID
+      operationId: get-feed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get a feed
+      tags:
+        - feeds
+    put:
+      description: Update an existing RSS feed
+      operationId: update-feed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Input"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Update a feed
+      tags:
+        - feeds
+  /feeds/{id}/mark-all-read:
+    post:
+      description: Mark all posts in a feed as read
+      operationId: mark-all-read
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Mark all posts as read
+      tags:
+        - feeds
+  /feeds/{id}/unread/count:
+    get:
+      description: Get the number of unread posts for a specific feed
+      operationId: count-unread-by-feed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountUnreadOutputBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Count unread posts by feed
+      tags:
+        - feeds
+  /posts:
+    get:
+      description: Retrieve posts with optional filters (feed_id, unread_only)
+      operationId: list-posts
+      parameters:
+        - explode: false
+          in: query
+          name: limit
+          schema:
+            default: 20
+            examples:
+              - 20
+            format: int32
+            maximum: 100
+            minimum: 1
+            type: integer
+        - explode: false
+          in: query
+          name: offset
+          schema:
+            default: 0
+            examples:
+              - 0
+            format: int32
+            minimum: 0
+            type: integer
+        - description: Filter by feed ID (0 = all feeds)
+          explode: false
+          in: query
+          name: feed_id
+          schema:
+            default: 0
+            description: Filter by feed ID (0 = all feeds)
+            examples:
+              - 1
+            format: int32
+            minimum: 0
+            type: integer
+        - description: Show only unread posts
+          explode: false
+          in: query
+          name: unread_only
+          schema:
+            default: false
+            description: Show only unread posts
+            examples:
+              - false
+            type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/PostResponse"
+                type:
+                  - array
+                  - "null"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List posts
+      tags:
+        - posts
+  /posts/unread/count:
+    get:
+      description: Get the total number of unread posts
+      operationId: count-unread
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountUnreadOutputBody"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Count unread posts
+      tags:
+        - posts
+  /posts/{id}:
+    get:
+      description: Retrieve a specific post by ID
+      operationId: get-post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get a post
+      tags:
+        - posts
+  /posts/{id}/read:
+    patch:
+      description: Update the read status of a post
+      operationId: mark-post-read
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            examples:
+              - 1
+            format: int32
+            minimum: 1
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkReadRequest"
+        required: true
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Mark post as read/unread
+      tags:
+        - posts
