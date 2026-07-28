@@ -27,12 +27,13 @@ api/
 │   ├── middleware/
 │   │   └── request_id.go        Request ID + access-log middleware (chi)
 │   ├── feed/
-│   │   ├── routes.go            Huma route registration for /feeds*
+│   │   ├── routes.go            Huma route registration for /feeds, /feeds/{id}, /feeds/refresh
 │   │   ├── service.go           Feed refresh logic (fetch, parse, upsert posts)
 │   │   ├── favicon.go           Favicon discovery (parses home page <link rel="icon">, falls back to /favicon.ico)
 │   │   └── models.go            Request/response types
 │   ├── post/
-│   │   ├── routes.go            Huma route registration for /posts*
+│   │   ├── routes.go            Huma route registration for /posts*, plus /feeds/{id}/mark-all-read and
+│   │   │                        /feeds/{id}/unread/count (post-scoped operations under the /feeds prefix)
 │   │   ├── service.go           Read/unread + listing logic
 │   │   └── models.go            Request/response types
 │   └── db/                      SQLC-generated code — do not hand-edit
